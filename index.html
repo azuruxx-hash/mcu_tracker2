@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Le chemin vers Avengers: Doomsday</title>
+  <style>
+    /* --- VARIABLES GLOBALES DE BASE --- */
+    :root {
+      --bg-color: #0b0d17;
+      --bg-texture: radial-gradient(circle at 50% 0%, #151a2f, transparent 70%);
+      
+      --card-bg: rgba(19, 23, 40, 0.85);
+      --card-gradient: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+      --card-border: #20263f;
+      --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      --card-hover-shadow: 0 8px 25px var(--hero-glow);
+      
+      --text-main: #ffffff;
+      --text-muted: #8c96b5;
+      
+      --accent-main: #ff5e36;
+      --accent-secondary: #10b981;
+      
+      --accent-user1: #3b82f6; 
+      --accent-user2: #ec4899; 
+      --accent-both: #10b981;  
+      
+      --star-color: #f59e0b;
+      --hero-glow: rgba(255, 94, 54, 0.15);
+      --animation-pulse: pulse-default 3s infinite ease-in-out;
+      --hero-watermark: none;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+    
+    body { 
+      background-color: var(--bg-color); 
+      background-image: var(--bg-texture);
+      background-attachment: fixed;
+      color: var(--text-main); 
+      display: flex; 
+      justify-content: center; 
+      padding: 40px 20px; 
+      min-height: 100vh;
+      transition: background 0.5s ease, color 0.5s ease;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* FILIGRANE / LOGO EN ARRIÈRE-PLAN FLOUTÉ */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80vw;
+      height: 80vh;
+      max-width: 700px;
+      max-height: 700px;
+      background-image: var(--hero-watermark);
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: contain;
+      opacity: 0.12;
+      filter: blur(25px) drop-shadow(0 0 30px var(--accent-main));
+      pointer-events: none;
+      z-index: 0;
+      transition: all 0.5s ease;
+    }
+
+    .container { max-width: 700px; width: 100%; position: relative; z-index: 1; }
+
+    .subtitle-top { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 3px; color: var(--text-muted); margin-bottom: 5px; font-weight: 600; }
+    h1 { font-size: 2.4rem; font-weight: 900; line-height: 1.1; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 20px var(--hero-glow); }
+    h1 span { background: linear-gradient(to right, var(--accent-main), var(--accent-secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .description { color: var(--text-muted); font-size: 1rem; margin-top: 10px; margin-bottom: 35px; }
+
+    /* --- BARRE DE PROGRESSION & BOUTON AJOUT --- */
+    .progress-section { 
+      margin-bottom: 25px; 
+      background: var(--card-bg); 
+      background-image: var(--card-gradient);
+      padding: 20px; 
+      border-radius: 16px; 
+      border: 1px solid var(--card-border);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.02);
+      backdrop-filter: blur(10px);
+    }
+    .progress-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px; }
+    .progress-title { font-size: 0.95rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+    .progress-count { font-size: 1.8rem; font-weight: 900; color: var(--text-main); text-shadow: 0 0 10px var(--hero-glow); }
+    .progress-bar-bg { width: 100%; height: 10px; background-color: rgba(0,0,0,0.4); border: 1px solid var(--card-border); border-radius: 10px; overflow: hidden; }
+    .progress-bar-fill { 
+      height: 100%; 
+      width: 0%; 
+      background: linear-gradient(90deg, var(--accent-main), var(--accent-secondary)); 
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); 
+      box-shadow: 0 0 15px var(--accent-main);
+    }
+
+    .add-movie-btn {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 25px;
+      background: rgba(0,0,0,0.3);
+      border: 2px dashed var(--card-border);
+      border-radius: 12px;
+      color: var(--text-muted);
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .add-movie-btn:hover {
+      border-color: var(--accent-main);
+      color: var(--text-main);
+      background: rgba(255,255,255,0.03);
+    }
+
+    /* --- FORMULAIRE D'AJOUT --- */
+    .add-form {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 25px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .add-form.hidden { display: none; }
+    .form-row { display: flex; gap: 10px; }
+    .add-form input, .add-form select {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      background: rgba(0,0,0,0.4);
+      color: #fff;
+      font-size: 0.9rem;
+      outline: none;
+    }
+    .add-form input:focus { border-color: var(--accent-main); }
+    .form-actions { display: flex; gap: 10px; justify-content: flex-end; }
+    .btn-submit { background: var(--accent-main); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+    .btn-cancel { background: transparent; color: var(--text-muted); border: 1px solid var(--card-border); padding: 8px 16px; border-radius: 8px; cursor: pointer; }
+
+    /* --- EN-TÊTES DE SECTION --- */
+    .section-title { display: flex; align-items: center; justify-content: space-between; margin-top: 45px; margin-bottom: 20px; border-bottom: 1px solid var(--card-border); padding-bottom: 10px; }
+    .section-badge { background: linear-gradient(135deg, var(--accent-main), var(--card-border)); color: #fff; font-size: 0.8rem; font-weight: 800; padding: 4px 12px; border-radius: 8px; margin-right: 12px; box-shadow: 0 4px 10px var(--hero-glow); }
+    .section-name { font-size: 1.2rem; font-weight: 800; flex-grow: 1; text-transform: uppercase; letter-spacing: 1px; }
+    .section-count { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
+
+    /* --- CARTES DES FILMS --- */
+    .item-card { 
+      background-color: var(--card-bg); 
+      background-image: var(--card-gradient);
+      border: 1px solid var(--card-border); 
+      border-radius: 14px; 
+      padding: 18px; 
+      margin-bottom: 15px; 
+      display: flex; 
+      flex-direction: column;
+      gap: 15px;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      box-shadow: var(--card-shadow);
+      backdrop-filter: blur(5px);
+      position: relative;
+    }
+    .item-card:hover { border-color: var(--accent-secondary); transform: translateY(-3px) scale(1.01); box-shadow: var(--card-hover-shadow); z-index: 2; }
+    .item-card.both-done { 
+      border-color: var(--accent-both); 
+      background-color: rgba(16, 185, 129, 0.08);
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
+    }
+
+    .item-main { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+    .item-left { display: flex; align-items: center; gap: 15px; }
+    .item-icon { font-size: 1.5rem; opacity: 0.9; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+    .item-title { font-size: 1.05rem; font-weight: 800; margin-bottom: 4px; letter-spacing: 0.5px; }
+    .item-details { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
+
+    /* SUPPRESSION DE BLOC */
+    .delete-btn {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.2);
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+    .delete-btn:hover { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
+
+    /* --- BOUTONS UTILISATEURS --- */
+    .checkbox-group { display: flex; gap: 10px; align-items: center; }
+    .user-btn { width: 44px; height: 40px; border-radius: 10px; border: 1px solid var(--card-border); background: rgba(0,0,0,0.2); color: var(--text-muted); cursor: pointer; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; transition: all 0.25s ease; overflow: hidden; position: relative; }
+    .user-btn:hover { background: rgba(255,255,255,0.05); border-color: var(--text-muted); }
+    .user-btn.u1.active { background: linear-gradient(135deg, var(--accent-user1), #1e3a8a); border-color: var(--accent-user1); color: white; box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
+    .user-btn.u2.active { background: linear-gradient(135deg, var(--accent-user2), #831843); border-color: var(--accent-user2); color: white; box-shadow: 0 0 15px rgba(236, 72, 153, 0.5); }
+
+    /* --- ÉTOILES & NOTATION --- */
+    .rating-section { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px; }
+    .ratings-container { display: flex; gap: 20px; flex-wrap: wrap; }
+    .user-rating { display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.2); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.03); }
+    .user-rating-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
+    .stars-picker { display: flex; gap: 2px; }
+    .star-btn { background: none; border: none; color: rgba(255,255,255,0.1); cursor: pointer; font-size: 1.1rem; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .star-btn.active { color: var(--star-color); text-shadow: 0 0 8px var(--star-color); }
+    .star-btn:hover { transform: scale(1.3); }
+    
+    .avg-rating-badge { display: flex; align-items: center; gap: 6px; background: rgba(0,0,0,0.4); border: 1px solid var(--star-color); color: var(--star-color); padding: 4px 12px; border-radius: 8px; font-weight: 800; font-size: 0.9rem; box-shadow: 0 0 10px rgba(245, 158, 11, 0.15); }
+
+    /* --- FLÈCHES DE RÉORGANISATION --- */
+    .arrow-group { display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; }
+    .arrow-btn { width: 28px; height: 20px; border: 1px solid transparent; background-color: rgba(0,0,0,0.2); color: var(--text-muted); border-radius: 6px; cursor: pointer; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+    .arrow-btn:hover:not(:disabled) { background-color: var(--accent-main); color: #fff; box-shadow: 0 2px 8px var(--hero-glow); }
+    .arrow-btn:disabled { opacity: 0.15; cursor: not-allowed; }
+
+    .legend { display: flex; gap: 25px; margin-bottom: 30px; font-size: 0.9rem; font-weight: 600; color: var(--text-muted); flex-wrap: wrap; justify-content: center; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
+    .legend-item { display: flex; align-items: center; gap: 8px; }
+    .dot { width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 8px currentColor; }
+
+    /* --- SÉLECTEUR DE THÈME --- */
+    .theme-switcher { position: fixed; top: 20px; right: 20px; z-index: 100; }
+    .theme-toggle-btn { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--card-border); background-color: var(--card-bg); font-size: 1.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0,0,0,0.6); transition: all 0.3s ease; animation: var(--animation-pulse); }
+    .theme-toggle-btn:hover { border-color: var(--accent-main); transform: scale(1.1) rotate(15deg); }
+    .theme-menu { position: absolute; top: 65px; right: 0; background-color: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 10px; min-width: 220px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); backdrop-filter: blur(15px); }
+    .theme-menu.hidden { display: none; }
+    .theme-option { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 600; color: var(--text-main); transition: all 0.2s ease; margin-bottom: 4px; }
+    .theme-option:hover { background-color: rgba(255,255,255,0.08); transform: translateX(5px); }
+    .theme-swatch { width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; border: 2px solid rgba(255,255,255,0.3); box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+
+    /* =========================================================================
+       ✨ THÈMES MCU (LOGOS ET TEXTURES EN FILIGRANE FLOUTÉ) ✨
+       ========================================================================= */
+
+    /* 🔴 IRON MAN : Réacteur Arc en arrière-plan */
+    body.theme-ironman { 
+      --bg-color: #120302; 
+      --bg-texture: repeating-linear-gradient(45deg, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 2px, transparent 2px, transparent 4px), linear-gradient(135deg, #2b0806 0%, #0a0100 100%);
+      --hero-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' stroke='%23ffd700' stroke-width='4' fill='none'/%3E%3Ccircle cx='50' cy='50' r='30' stroke='%23ff2a00' stroke-width='6' fill='none'/%3E%3Cpolygon points='50,15 80,65 20,65' fill='%234fc3f7'/%3E%3Ccircle cx='50' cy='50' r='12' fill='%23ffffff'/%3E%3C/svg%3E");
+      --card-bg: rgba(30, 8, 7, 0.9);
+      --card-gradient: linear-gradient(145deg, rgba(255, 215, 0, 0.05) 0%, rgba(255, 0, 0, 0.02) 100%);
+      --card-border: #61130d; 
+      --text-muted: #e5b376;
+      --accent-main: #ff2a00; 
+      --accent-secondary: #ffd700; 
+      --accent-user1: #ffd700; --accent-user2: #ff2a00; --accent-both: #4fc3f7;
+      --star-color: #ffd700;
+      --hero-glow: rgba(255, 215, 0, 0.3);
+      --card-hover-shadow: 0 10px 25px rgba(255, 42, 0, 0.3), inset 0 0 15px rgba(255, 215, 0, 0.1);
+    }
+
+    /* 🛡️ CAPTAIN AMERICA : Bouclier */
+    body.theme-cap { 
+      --bg-color: #060b17; 
+      --bg-texture: linear-gradient(to bottom, #09122b, #04070f);
+      --hero-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%23e03131'/%3E%3Ccircle cx='50' cy='50' r='36' fill='%23ffffff'/%3E%3Ccircle cx='50' cy='50' r='26' fill='%23e03131'/%3E%3Ccircle cx='50' cy='50' r='16' fill='%233b5bdb'/%3E%3Cpolygon points='50,35 54,46 65,46 56,53 59,64 50,57 41,64 44,53 35,46 46,46' fill='%23ffffff'/%3E%3C/svg%3E");
+      --card-bg: rgba(12, 20, 43, 0.9);
+      --card-gradient: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, transparent 100%);
+      --card-border: #1a2a5c; 
+      --text-muted: #a5bce6;
+      --accent-main: #e03131; 
+      --accent-secondary: #3b5bdb; 
+      --accent-user1: #3b5bdb; --accent-user2: #e03131; --accent-both: #f8f9fa;
+      --star-color: #f1f3f5;
+      --hero-glow: rgba(59, 91, 219, 0.3);
+      --card-hover-shadow: 0 8px 25px rgba(59, 91, 219, 0.25), 0 0 10px rgba(224, 49, 49, 0.2);
+    }
+
+    /* 🧪 HULK : Poing Gamma / Radiation */
+    body.theme-hulk { 
+      --bg-color: #030d05; 
+      --bg-texture: linear-gradient(to bottom right, #051a09, #010502);
+      --hero-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='12' fill='%2340c057'/%3E%3Cpath d='M50 10 L50 30 M50 70 L50 90 M10 50 L30 50 M70 50 L90 50' stroke='%2340c057' stroke-width='10' stroke-linecap='round'/%3E%3Cpath d='M22 22 L36 36 M64 64 L78 78 M22 78 L36 64 M64 36 L78 22' stroke='%239c36b5' stroke-width='8' stroke-linecap='round'/%3E%3C/svg%3E");
+      --card-bg: rgba(6, 26, 12, 0.9);
+      --card-gradient: linear-gradient(135deg, rgba(156, 54, 181, 0.05) 0%, rgba(64, 192, 87, 0.02) 100%);
+      --card-border: #113d1e; 
+      --text-muted: #8cd69e;
+      --accent-main: #40c057; 
+      --accent-secondary: #9c36b5; 
+      --accent-user1: #40c057; --accent-user2: #9c36b5; --accent-both: #82c91e;
+      --star-color: #40c057;
+      --hero-glow: rgba(64, 192, 87, 0.3);
+      --card-hover-shadow: 0 10px 30px rgba(64, 192, 87, 0.2), inset 0 0 15px rgba(156, 54, 181, 0.15);
+    }
+
+    /* ⚡ THOR : Marteau & Éclairs */
+    body.theme-thor { 
+      --bg-color: #020712; 
+      --bg-texture: linear-gradient(to bottom, #061126, #010308);
+      --hero-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 5 L20 40 H45 L35 95 L80 45 H55 Z' fill='%2374c0fc'/%3E%3C/svg%3E");
+      --card-bg: rgba(6, 18, 40, 0.9);
+      --card-gradient: linear-gradient(180deg, rgba(116, 192, 252, 0.05) 0%, transparent 100%);
+      --card-border: #0d2654; 
+      --text-muted: #9bc7f0;
+      --accent-main: #1971c2; 
+      --accent-secondary: #f59f00; 
+      --accent-user1: #1971c2; --accent-user2: #f59f00; --accent-both: #74c0fc;
+      --star-color: #74c0fc;
+      --hero-glow: rgba(116, 192, 252, 0.4);
+      --card-hover-shadow: 0 5px 30px rgba(116, 192, 252, 0.3), 0 0 10px rgba(255,255,255,0.2);
+    }
+
+    /* 🐾 BLACK PANTHER : Masque / Griffes */
+    body.theme-panther { 
+      --bg-color: #050208; 
+      --bg-texture: repeating-linear-gradient(45deg, rgba(255,255,255,0.01) 0px, rgba(255,255,255,0.01) 2px, transparent 2px, transparent 6px);
+      --hero-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,10 85,35 75,85 50,95 25,85 15,35' fill='none' stroke='%237048e8' stroke-width='6'/%3E%3Cpolygon points='35,40 45,50 25,55' fill='%23c0c0c0'/%3E%3Cpolygon points='65,40 55,50 75,55' fill='%23c0c0c0'/%3E%3C/svg%3E");
+      --card-bg: rgba(12, 6, 18, 0.95);
+      --card-gradient: linear-gradient(135deg, rgba(112, 72, 232, 0.05) 0%, transparent 100%);
+      --card-border: #231136; 
+      --text-muted: #ae98eb;
+      --accent-main: #7048e8; 
+      --accent-secondary: #c0c0c0; 
+      --accent-user1: #9775fa; --accent-user2: #c0c0c0; --accent-both: #d0bfff;
+      --star-color: #9775fa;
+      --hero-glow: rgba(112, 72, 232, 0.3);
+      --card-hover-shadow: 0 10px 25px rgba(112, 72, 232, 0.25), inset 0 0 12px rgba(192, 192, 192, 0.05);
+    }
+
+    /* 🕷️ SPIDER-MAN : Logo Araignée */
+    body.theme-spidey { 
+      --bg-color: #0d0404; 
+      --bg-texture: repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 30px);
+      --hero-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cellipse cx='50' cy='55' rx='12' ry='18' fill='%23e03131'/%3E%3Ccircle cx='50' cy='32' r='8' fill='%23e03131'/%3E%3Cpath d='M42 30 Q 20 10 10 25 M42 34 Q 15 35 5 50 M42 55 Q 10 65 10 85 M42 60 Q 25 85 30 95' stroke='%23e03131' stroke-width='4' fill='none'/%3E%3Cpath d='M58 30 Q 80 10 90 25 M58 34 Q 85 35 95 50 M58 55 Q 90 65 90 85 M58 60 Q 75 85 70 95' stroke='%23e03131' stroke-width='4' fill='none'/%3E%3C/svg%3E");
+      --card-bg: rgba(18, 6, 8, 0.9);
+      --card-gradient: linear-gradient(145deg, rgba(224, 49, 49, 0.04) 0%, rgba(25, 113, 194, 0.04) 100%);
+      --card-border: #3d141b; 
+      --text-muted: #e3a8af;
+      --accent-main: #e03131; 
+      --accent-secondary: #1971c2; 
+      --accent-user1: #e03131; --accent-user2: #1971c2; --accent-both: #f59f00;
+      --star-color: #e03131;
+      --hero-glow: rgba(224, 49, 49, 0.3);
+      --card-hover-shadow: 0 8px 20px rgba(224, 49, 49, 0.2), 0 0 15px rgba(25, 113, 194, 0.15);
+    }
+
+    @keyframes pulse-default { 0%, 100% { box-shadow: 0 0 0 rgba(255, 94, 54, 0); } 50% { box-shadow: 0 0 20px rgba(255, 94, 54, 0.5); } }
+  </style>
+</head>
+<body>
+
+<div class="theme-switcher">
+  <button id="theme-toggle" class="theme-toggle-btn" title="Changer de thème">🎨</button>
+  <div id="theme-menu" class="theme-menu hidden">
+    <div class="theme-option" data-theme="default"><span class="theme-swatch" style="background: linear-gradient(135deg, #ff5e36, #10b981);"></span>Défaut</div>
+    <div class="theme-option" data-theme="ironman"><span class="theme-swatch" style="background: linear-gradient(135deg, #ff2a00, #ffd700);"></span>Iron Man</div>
+    <div class="theme-option" data-theme="cap"><span class="theme-swatch" style="background: linear-gradient(135deg, #3b5bdb, #e03131);"></span>Captain America</div>
+    <div class="theme-option" data-theme="hulk"><span class="theme-swatch" style="background: linear-gradient(135deg, #40c057, #9c36b5);"></span>Hulk</div>
+    <div class="theme-option" data-theme="thor"><span class="theme-swatch" style="background: linear-gradient(135deg, #1971c2, #f59f00);"></span>Thor</div>
+    <div class="theme-option" data-theme="panther"><span class="theme-swatch" style="background: linear-gradient(135deg, #7048e8, #c0c0c0);"></span>Black Panther</div>
+    <div class="theme-option" data-theme="spidey"><span class="theme-swatch" style="background: linear-gradient(135deg, #e03131, #1971c2);"></span>Spider-Man</div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="subtitle-top">Avant Doomsday</div>
+  <h1>Le chemin vers<br><span>Avengers : Doomsday</span></h1>
+  <p class="description">Suivez votre progression et vos notes à deux en direct.</p>
+
+  <div class="legend">
+    <div class="legend-item"><div class="dot" style="background: var(--accent-user1);"></div> Moi</div>
+    <div class="legend-item"><div class="dot" style="background: var(--accent-user2);"></div> Mon Ami</div>
+    <div class="legend-item"><div class="dot" style="background: var(--accent-both);"></div> Vu par les 2</div>
+  </div>
+
+  <div class="progress-section">
+    <div class="progress-header">
+      <span class="progress-title">Progression commune</span>
+      <div class="progress-count"><span id="done-count">0</span>/<span id="total-count">0</span></div>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progress-fill"></div>
+    </div>
+  </div>
+
+  <button class="add-movie-btn" id="open-add-form">➕ Ajouter un film ou une série</button>
+
+  <form class="add-form hidden" id="add-form">
+    <div class="form-row">
+      <input type="text" id="new-title" placeholder="Titre (ex: Fantastic Four)" required style="flex-grow: 1;">
+      <input type="text" id="new-year" placeholder="Année" style="width: 90px;" required>
+      <input type="text" id="new-icon" placeholder="Emoji" style="width: 70px;" value="🎬">
+    </div>
+    <div class="form-row">
+      <select id="new-section" style="width: 100%;">
+        <option value="01">Phase 1 : Le début de l'univers</option>
+        <option value="02">Phase 2 : La montée en puissance</option>
+        <option value="03">Phase 3 : La division et l'affrontement</option>
+        <option value="04" selected>Phase 4 & 5 : La suite des événements</option>
+      </select>
+    </div>
+    <div class="form-actions">
+      <button type="button" class="btn-cancel" id="close-add-form">Annuler</button>
+      <button type="submit" class="btn-submit">Ajouter à la liste</button>
+    </div>
+  </form>
+
+  <div id="mcu-list"></div>
+</div>
+
+<!-- Firebase Scripts (Compat) -->
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDZRNpCbwNTgeoHLKNzaS3svcrRyryGkYI",
+    authDomain: "mcu-suivi.firebaseapp.com",
+    databaseURL: "https://mcu-suivi-default-rtdb.firebaseio.com",
+    projectId: "mcu-suivi",
+    storageBucket: "mcu-suivi.firebasestorage.app",
+    messagingSenderId: "63391575550",
+    appId: "1:63391575550:web:a9c0c8ad36cdaa4c1864af",
+    measurementId: "G-GDEXH1X68X"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  const progressRef = db.ref('mcu_progress');
+  const orderRef = db.ref('mcu_order');
+  const ratingsRef = db.ref('mcu_ratings');
+  const customItemsRef = db.ref('mcu_custom_items');
+
+  const initialMcuData = [
+    { section: "01", sectionTitle: "Phase 1 : Le début de l'univers", items: [
+        { id: "iron1", title: "Iron Man", year: "2008", icon: "⚙️" },
+        { id: "hulk", title: "L'Incroyable Hulk", year: "2008", icon: "🧪" },
+        { id: "iron2", title: "Iron Man 2", year: "2010", icon: "⚙️" },
+        { id: "thor1", title: "Thor", year: "2011", icon: "🔨" },
+        { id: "cap1", title: "Captain America: First Avenger", year: "2011", icon: "🛡️" },
+        { id: "avengers1", title: "Avengers", year: "2012", icon: "👥" }
+    ]},
+    { section: "02", sectionTitle: "Phase 2 : La montée en puissance", items: [
+        { id: "iron3", title: "Iron Man 3", year: "2013", icon: "⚙️" },
+        { id: "cap2", title: "Captain America : Le Soldat de l'Hiver", year: "2014", icon: "🛡️" },
+        { id: "gotg1", title: "Les Gardiens de la Galaxie", year: "2014", icon: "🚀" },
+        { id: "avengers2", title: "Avengers : L'Ère d'Ultron", year: "2015", icon: "🤖" },
+        { id: "ant1", title: "Ant-Man", year: "2015", icon: "🐜" }
+    ]},
+    { section: "03", sectionTitle: "Phase 3 : La division et l'affrontement", items: [
+        { id: "civilwar", title: "Captain America: Civil War", year: "2016", icon: "⚔️" },
+        { id: "docstrange1", title: "Doctor Strange", year: "2016", icon: "👁️" },
+        { id: "gotg2", title: "Les Gardiens de la Galaxie Vol. 2", year: "2017", icon: "🚀" },
+        { id: "spidey1", title: "Spider-Man: Homecoming", year: "2017", icon: "🕷️" },
+        { id: "thor3", title: "Thor: Ragnarok", year: "2017", icon: "⚡" },
+        { id: "blackpanther1", title: "Black Panther", year: "2018", icon: "🐾" },
+        { id: "infinitywar", title: "Avengers: Infinity War", year: "2018", icon: "💎" },
+        { id: "ant2", title: "Ant-Man et la Guêpe", year: "2018", icon: "🐜" },
+        { id: "capm", title: "Captain Marvel", year: "2019", icon: "⭐" },
+        { id: "endgame", title: "Avengers: Endgame", year: "2019", icon: "⌛" },
+        { id: "loki1", title: "Loki (Saison 1)", year: "2021", icon: "⏱️" },
+        { id: "loki2", title: "Loki (Saison 2)", year: "2023", icon: "⏳" },
+        { id: "spidey2", title: "Spider-Man: Far From Home", year: "2019", icon: "🕷️" }
+    ]},
+    { section: "04", sectionTitle: "Phase 4 & 5 : La suite des événements", items: [
+        { id: "shangchi", title: "Shang-Chi et la Légende des Dix Anneaux", year: "2021", icon: "💍" },
+        { id: "docstrange2", title: "Doctor Strange in the Multiverse of Madness", year: "2022", icon: "🌀" },
+        { id: "wakanda", title: "Black Panther: Wakanda Forever", year: "2022", icon: "🐾" },
+        { id: "gotg3", title: "Les Gardiens de la Galaxie Vol. 3", year: "2023", icon: "🦝" },
+        { id: "marvels", title: "The Marvels", year: "2023", icon: "💫" },
+        { id: "deadpool3", title: "Deadpool & Wolverine", year: "2024", icon: "⚔️" },
+        { id: "f4", title: "Les Quatre Fantastiques", year: "2025", icon: "4️⃣" },
+        { id: "thunderbolts", title: "Thunderbolts*", year: "2025", icon: "⚡" }
+    ]}
+  ];
+
+  let userProgress = {};
+  let orderData = {};
+  let ratingsData = {};
+  let customItemsData = {};
+
+  progressRef.on('value', (snapshot) => { userProgress = snapshot.val() || {}; renderList(); });
+  orderRef.on('value', (snapshot) => { orderData = snapshot.val() || {}; renderList(); });
+  ratingsRef.on('value', (snapshot) => { ratingsData = snapshot.val() || {}; renderList(); });
+  customItemsRef.on('value', (snapshot) => { customItemsData = snapshot.val() || {}; renderList(); });
+
+  function getCombinedMcuData() {
+    const data = JSON.parse(JSON.stringify(initialMcuData));
+    Object.keys(customItemsData).forEach(key => {
+      const item = customItemsData[key];
+      const sec = data.find(s => s.section === item.section);
+      if (sec) {
+        sec.items.push(item);
+      }
+    });
+    return data;
+  }
+
+  function deleteItem(itemId) {
+    if (confirm("Veux-tu vraiment supprimer ce film de la liste ?")) {
+      db.ref(`mcu_custom_items/${itemId}`).remove();
+      db.ref(`mcu_progress/${itemId}`).remove();
+      db.ref(`mcu_ratings/${itemId}`).remove();
+      db.ref(`mcu_order/${itemId}`).remove();
+    }
+  }
+
+  function getEffectiveOrder(itemId, fullData) {
+    if (orderData[itemId] !== undefined) return orderData[itemId];
+    for (const sec of fullData) {
+      const idx = sec.items.findIndex(i => i.id === itemId);
+      if (idx !== -1) return idx;
+    }
+    return 0;
+  }
+
+  function moveItem(itemId, neighborId) {
+    if (!neighborId) return;
+    const currentData = getCombinedMcuData();
+    const updates = {};
+    updates[`mcu_order/${itemId}`] = getEffectiveOrder(neighborId, currentData);
+    updates[`mcu_order/${neighborId}`] = getEffectiveOrder(itemId, currentData);
+    db.ref().update(updates);
+  }
+
+  function setRating(itemId, user, rating) {
+    const currentRating = ratingsData[itemId]?.[user] || 0;
+    db.ref(`mcu_ratings/${itemId}/${user}`).set(currentRating === rating ? 0 : rating);
+  }
+
+  function renderStars(itemId, user, currentRating) {
+    let html = '<div class="stars-picker">';
+    for (let i = 1; i <= 5; i++) {
+      html += `<button class="star-btn ${i <= currentRating ? 'active' : ''}" onclick="setRating('${itemId}', '${user}', ${i})" title="${i}/5">★</button>`;
+    }
+    html += '</div>';
+    return html;
+  }
+
+  function renderList() {
+    const listContainer = document.getElementById('mcu-list');
+    listContainer.innerHTML = '';
+    let totalItems = 0, bothDoneItems = 0;
+    const fullData = getCombinedMcuData();
+
+    fullData.forEach(sec => {
+      const secHeader = document.createElement('div');
+      secHeader.className = 'section-title';
+      secHeader.innerHTML = `<span class="section-badge">${sec.section}</span><span class="section-name">${sec.sectionTitle}</span><span class="section-count">${sec.items.length} éléments</span>`;
+      listContainer.appendChild(secHeader);
+
+      const sortedItems = sec.items
+        .map((item, idx) => ({ ...item, __order: orderData[item.id] !== undefined ? orderData[item.id] : idx }))
+        .sort((a, b) => a.__order - b.__order);
+
+      sortedItems.forEach((item, posIndex) => {
+        totalItems++;
+        const itemState = userProgress[item.id] || { u1: false, u2: false };
+        if (itemState.u1 && itemState.u2) bothDoneItems++;
+
+        const itemRatings = ratingsData[item.id] || { u1: 0, u2: 0 };
+        let avg = '-';
+        if (itemRatings.u1 && itemRatings.u2) avg = ((itemRatings.u1 + itemRatings.u2) / 2).toFixed(1);
+        else if (itemRatings.u1) avg = itemRatings.u1.toFixed(1);
+        else if (itemRatings.u2) avg = itemRatings.u2.toFixed(1);
+
+        const card = document.createElement('div');
+        card.className = `item-card ${itemState.u1 && itemState.u2 ? 'both-done' : ''}`;
+        card.innerHTML = `
+          <div class="item-main">
+            <div class="item-left">
+              <div class="arrow-group">
+                <button class="arrow-btn" ${posIndex === 0 ? 'disabled' : ''} onclick="moveItem('${item.id}', '${posIndex > 0 ? sortedItems[posIndex - 1].id : ''}')">▲</button>
+                <button class="arrow-btn" ${posIndex === sortedItems.length - 1 ? 'disabled' : ''} onclick="moveItem('${item.id}', '${posIndex < sortedItems.length - 1 ? sortedItems[posIndex + 1].id : ''}')">▼</button>
+              </div>
+              <div class="item-icon">${item.icon}</div>
+              <div>
+                <div class="item-title">${item.title}</div>
+                <div class="item-details">${item.year}</div>
+              </div>
+            </div>
+            <div class="checkbox-group">
+              <button class="user-btn u1 ${itemState.u1 ? 'active' : ''}" onclick="toggleUser('${item.id}', 'u1')">Moi</button>
+              <button class="user-btn u2 ${itemState.u2 ? 'active' : ''}" onclick="toggleUser('${item.id}', 'u2')">Ami</button>
+              <button class="delete-btn" onclick="deleteItem('${item.id}')" title="Supprimer ce film">🗑️</button>
+            </div>
+          </div>
+          <div class="rating-section">
+            <div class="ratings-container">
+              <div class="user-rating"><span class="user-rating-label">Moi:</span>${renderStars(item.id, 'u1', itemRatings.u1 || 0)}</div>
+              <div class="user-rating"><span class="user-rating-label">Ami:</span>${renderStars(item.id, 'u2', itemRatings.u2 || 0)}</div>
+            </div>
+            <div class="avg-rating-badge">★ ${avg}</div>
+          </div>
+        `;
+        listContainer.appendChild(card);
+      });
+    });
+
+    document.getElementById('total-count').innerText = totalItems;
+    document.getElementById('done-count').innerText = bothDoneItems;
+    document.getElementById('progress-fill').style.width = (totalItems > 0 ? (bothDoneItems / totalItems) * 100 : 0) + '%';
+  }
+
+  function toggleUser(itemId, user) {
+    const currentState = userProgress[itemId] || { u1: false, u2: false };
+    db.ref(`mcu_progress/${itemId}/${user}`).set(!currentState[user]);
+  }
+
+  // --- Gestion du Formulaire d'Ajout ---
+  const openFormBtn = document.getElementById('open-add-form');
+  const closeFormBtn = document.getElementById('close-add-form');
+  const addForm = document.getElementById('add-form');
+
+  openFormBtn.addEventListener('click', () => addForm.classList.remove('hidden'));
+  closeFormBtn.addEventListener('click', () => addForm.classList.add('hidden'));
+
+  addForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const id = 'custom_' + Date.now();
+    const newItem = {
+      id: id,
+      title: document.getElementById('new-title').value.trim(),
+      year: document.getElementById('new-year').value.trim(),
+      icon: document.getElementById('new-icon').value.trim() || '🎬',
+      section: document.getElementById('new-section').value
+    };
+
+    db.ref(`mcu_custom_items/${id}`).set(newItem);
+    addForm.reset();
+    addForm.classList.add('hidden');
+  });
+
+  // --- Gestion du Thème ---
+  const themeToggleBtn = document.getElementById('theme-toggle');
+  const themeMenu = document.getElementById('theme-menu');
+
+  themeToggleBtn.addEventListener('click', (e) => { e.stopPropagation(); themeMenu.classList.toggle('hidden'); });
+  document.addEventListener('click', (e) => { if (!e.target.closest('.theme-switcher')) themeMenu.classList.add('hidden'); });
+
+  document.querySelectorAll('.theme-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      applyTheme(opt.dataset.theme);
+      themeMenu.classList.add('hidden');
+    });
+  });
+
+  function applyTheme(theme) {
+    document.body.className = theme !== 'default' ? `theme-${theme}` : '';
+    localStorage.setItem('mcu-theme', theme);
+  }
+  applyTheme(localStorage.getItem('mcu-theme') || 'default');
+</script>
+
+</body>
+</html>
