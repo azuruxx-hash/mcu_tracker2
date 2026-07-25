@@ -238,6 +238,68 @@
     body.theme-spidey { --bg-color: #0d0404; --bg-texture: repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 30px); --hero-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cellipse cx='50' cy='55' rx='12' ry='18' fill='%23e03131'/%3E%3Ccircle cx='50' cy='32' r='8' fill='%23e03131'/%3E%3Cpath d='M42 30 Q 20 10 10 25 M42 34 Q 15 35 5 50 M42 55 Q 10 65 10 85 M42 60 Q 25 85 30 95' stroke='%23e03131' stroke-width='4' fill='none'/%3E%3Cpath d='M58 30 Q 80 10 90 25 M58 34 Q 85 35 95 50 M58 55 Q 90 65 90 85 M58 60 Q 75 85 70 95' stroke='%23e03131' stroke-width='4' fill='none'/%3E%3C/svg%3E"); --card-bg: rgba(18, 6, 8, 0.9); --card-gradient: linear-gradient(145deg, rgba(224, 49, 49, 0.04) 0%, rgba(25, 113, 194, 0.04) 100%); --card-border: #3d141b; --text-muted: #e3a8af; --accent-main: #e03131; --accent-secondary: #1971c2; --accent-user1: #e03131; --accent-user2: #1971c2; --accent-both: #f59f00; --star-color: #e03131; --hero-glow: rgba(224, 49, 49, 0.3); --card-hover-shadow: 0 8px 20px rgba(224, 49, 49, 0.2), 0 0 15px rgba(25, 113, 194, 0.15); }
 
     @keyframes pulse-default { 0%, 100% { box-shadow: 0 0 0 rgba(255, 94, 54, 0); } 50% { box-shadow: 0 0 20px rgba(255, 94, 54, 0.5); } }
+
+    /* ==========================================================
+       RESPONSIVE MOBILE — n'affecte que les écrans <= 640px.
+       Aucune règle ci-dessus n'est modifiée : la version PC
+       garde exactement le même rendu qu'avant.
+       ========================================================== */
+    @media (max-width: 640px) {
+      body { padding: 24px 12px; }
+      .container { max-width: 100%; }
+
+      .theme-switcher { top: 12px; right: 12px; }
+      .theme-toggle-btn { width: 42px; height: 42px; font-size: 1.2rem; }
+      .theme-menu { min-width: 190px; top: 52px; }
+
+      .subtitle-top { font-size: 0.7rem; letter-spacing: 2px; }
+      h1 { font-size: 1.5rem; }
+      .description { font-size: 0.85rem; margin-bottom: 22px; }
+
+      .legend { gap: 12px; padding: 10px; font-size: 0.78rem; }
+
+      .filter-bar { flex-direction: column; }
+      .filter-bar input[type="text"], .filter-bar select { min-width: 0; flex: 1 1 auto; }
+
+      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .stat-card { padding: 12px 8px; }
+      .stat-value { font-size: 1rem; }
+
+      .top5-entry { padding: 10px 12px; gap: 10px; }
+      .top5-title { font-size: 0.88rem; }
+
+      .progress-section { padding: 16px; }
+
+      .section-title { margin-top: 32px; flex-wrap: wrap; row-gap: 6px; }
+      .section-name { font-size: 1rem; }
+      .phase-badge { margin-left: 0; }
+
+      /* --- Cartes films : c'était le principal problème --- */
+      .item-card { padding: 14px; gap: 12px; }
+      .item-main { flex-direction: column; align-items: stretch; gap: 12px; }
+      .item-left { width: 100%; }
+      .item-poster, .item-icon { width: 46px; height: 68px; }
+      .item-title {
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
+        font-size: 1rem;
+        line-height: 1.25;
+      }
+      .item-info-content { display: flex; flex-direction: column; gap: 5px; }
+      .btn-synopsis { width: fit-content; margin-top: 2px; }
+
+      .checkbox-group { width: 100%; justify-content: flex-start; flex-wrap: wrap; gap: 8px; }
+      .user-btn { flex: 1 1 auto; min-width: 68px; }
+      .delete-btn { flex: 0 0 auto; margin-left: auto; }
+
+      .rating-section { flex-direction: column; align-items: stretch; gap: 12px; }
+      .ratings-container { flex-direction: column; gap: 8px; }
+      .avg-rating-badge { align-self: flex-start; }
+
+      .quiz-modal { padding: 18px; }
+      .quiz-header { font-size: 0.95rem; }
+    }
   </style>
 </head>
 <body>
@@ -468,6 +530,61 @@
     thunderbolts: { question: "De qui est principalement composée cette équipe d'antihéros ?", options: ["D'anciens agents et vilains recrutés par Valentina de Fontaine", "Des X-Men", "Des jeunes Avengers", "Des Eternals"], correct: 0 }
   };
 
+  // Génère une question de quiz "à la volée" pour les films qui n'ont pas
+  // de question écrite à la main (typiquement les films ajoutés via AlloCiné).
+  // Utilise l'année de sortie, qui est toujours renseignée par le scraping.
+  function shuffleArray(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function generateAutoQuiz(item) {
+    const year = parseInt(item.year, 10);
+    if (year && !isNaN(year)) {
+      const wrongYears = new Set();
+      let guard = 0;
+      while (wrongYears.size < 3 && guard < 50) {
+        guard++;
+        const offset = Math.floor(Math.random() * 9) - 4; // -4..+4
+        const y = year + offset;
+        if (offset !== 0 && y >= 1990 && y <= 2035 && y !== year && !wrongYears.has(y)) wrongYears.add(y);
+      }
+      const options = shuffleArray([year, ...wrongYears]).map(String);
+      return {
+        question: `En quelle année "${item.title}" est-il sorti ?`,
+        options,
+        correct: options.indexOf(String(year))
+      };
+    }
+    if (item.duration) {
+      const dur = parseInt(item.duration, 10);
+      const wrongDurations = new Set();
+      let guard = 0;
+      while (wrongDurations.size < 3 && guard < 50) {
+        guard++;
+        const offset = (Math.floor(Math.random() * 6) - 3) * 8; // -24..+24 par pas de 8
+        const d = dur + offset;
+        if (offset !== 0 && d > 0 && !wrongDurations.has(d)) wrongDurations.add(d);
+      }
+      const options = shuffleArray([dur, ...wrongDurations]).map(v => `${v} min`);
+      return {
+        question: `Quelle est la durée approximative de "${item.title}" ?`,
+        options,
+        correct: options.indexOf(`${dur} min`)
+      };
+    }
+    // Dernier recours si aucune donnée exploitable n'est disponible
+    return {
+      question: `Qu'as-tu pensé de "${item.title}" ?`,
+      options: ["Un excellent film !", "Correct", "Plutôt moyen", "Pas convaincu"],
+      correct: 0
+    };
+  }
+
   let globalData = {
     progress: {}, order: {}, ratings: {}, customItems: {}, hiddenItems: {},
     comments: {}, watchDates: {}, quizScore: 0
@@ -534,9 +651,10 @@
     db.ref(`mcu_progress/${itemId}/${user}`).set(!currentState);
     if (!currentState) {
       db.ref(`mcu_watch_dates/${itemId}/${user}`).set(Date.now());
-      if (quizData[itemId]) {
-        const item = getRawCombinedMcuData().flatMap(s => s.items).find(i => i.id === itemId);
-        if (item) setTimeout(() => showQuiz(itemId, item), 350);
+      const item = getRawCombinedMcuData().flatMap(s => s.items).find(i => i.id === itemId);
+      if (item) {
+        if (!quizData[itemId]) quizData[itemId] = generateAutoQuiz(item);
+        setTimeout(() => showQuiz(itemId, item), 350);
       }
     } else {
       db.ref(`mcu_watch_dates/${itemId}/${user}`).remove();
