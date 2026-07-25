@@ -5,6 +5,80 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Le chemin vers Avengers: Doomsday</title>
   <style>
+  
+	/* Style du bouton Synopsis */
+.btn-synopsis {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-synopsis:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Style de la bulle flottante (Modale) */
+.synopsis-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+}
+
+.synopsis-modal.active {
+  display: flex;
+}
+
+.synopsis-modal-content {
+  background: #1a1d24;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 25px;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  color: #fff;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  position: relative;
+  animation: modalFadeIn 0.2s ease;
+}
+
+.synopsis-modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.synopsis-modal-close:hover {
+  color: #fff;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
     /* --- VARIABLES GLOBALES DE BASE --- */
     :root {
       --bg-color: #0b0d17;
@@ -122,7 +196,7 @@
       background: rgba(255,255,255,0.03);
     }
 
-    /* --- FORMULAIRE D'AJOUT SIMPLIFIÉ (LIEN ALLOCINÉ) --- */
+    /* --- FORMULAIRE D'AJOUT --- */
     .add-form {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
@@ -179,31 +253,16 @@
       box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
     }
 
-    .item-main { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 10px; }
-    .item-left { display: flex; align-items: center; gap: 15px; min-width: 0; flex-grow: 1; }
-    .item-poster-thumb { width: 40px; height: 55px; border-radius: 6px; object-fit: cover; border: 1px solid var(--card-border); flex-shrink: 0; }
+    .item-main { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 15px; }
+    .item-left { display: flex; align-items: center; gap: 15px; flex-grow: 1; min-width: 0; }
+    .item-poster { width: 50px; height: 75px; object-fit: cover; border-radius: 6px; border: 1px solid var(--card-border); flex-shrink: 0; }
     .item-icon { font-size: 1.5rem; opacity: 0.9; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); flex-shrink: 0; }
+    .item-info-content { flex-grow: 1; min-width: 0; }
     .item-title { font-size: 1.05rem; font-weight: 800; margin-bottom: 4px; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .item-details { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
-
-    /* BOUTON SYNOPSIS SUR LA CARTE */
-    .synopsis-trigger-btn {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid var(--card-border);
-      color: var(--text-muted);
-      padding: 5px 10px;
-      border-radius: 8px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-      white-space: nowrap;
-    }
-    .synopsis-trigger-btn:hover {
-      background: var(--accent-main);
-      color: #fff;
-      border-color: var(--accent-main);
-    }
+    .item-synopsis { font-size: 0.8rem; color: var(--text-muted); margin-top: 6px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .item-title a { color: var(--text-main); text-decoration: none; transition: color 0.2s; }
+    .item-title a:hover { color: var(--accent-main); text-decoration: underline; }
 
     /* SUPPRESSION DE BLOC */
     .delete-btn {
@@ -255,16 +314,6 @@
     .comments-box textarea:focus { border-color: var(--accent-main); }
     .comment-label { font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 3px; display: block; }
     .item-watch-date { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; opacity: 0.8; }
-
-    /* --- FENÊTRE FLOTTANTE (MODALE SYNOPSIS) --- */
-    .synopsis-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
-    .synopsis-overlay.hidden { display: none; }
-    .synopsis-modal { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 25px; max-width: 500px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.8); animation: badge-pop 0.3s ease; display: flex; flex-direction: column; gap: 15px; max-height: 85vh; overflow-y: auto; }
-    .synopsis-header { display: flex; gap: 15px; align-items: center; }
-    .synopsis-poster { width: 90px; height: 130px; border-radius: 10px; object-fit: cover; border: 1px solid var(--card-border); flex-shrink: 0; }
-    .synopsis-title-box h3 { font-size: 1.2rem; font-weight: 900; margin-bottom: 5px; color: var(--text-main); }
-    .synopsis-meta { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
-    .synopsis-body { font-size: 0.95rem; line-height: 1.5; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px; }
 
     /* --- BADGES DE SUCCÈS --- */
     .phase-badge {
@@ -529,17 +578,15 @@
     </div>
   </div>
 
-  <button class="add-movie-btn" id="open-add-form">➕ Ajouter un film via un lien AlloCiné</button>
-  <button class="add-movie-btn" id="open-hidden-panel" style="margin-top: -15px;">🗑️ Films supprimés</button>
+  <button class="add-movie-btn" id="open-add-form">➕ Ajouter un film ou une série</button>
   <div class="hidden-panel hidden" id="hidden-panel"></div>
 
-  <!-- FORMULAIRE SIMPLIFIÉ : UN SEUL CHAMP LIEN ALLOCINÉ -->
   <form class="add-form hidden" id="add-form">
     <div class="form-row">
-      <input type="url" id="new-allocine-url" placeholder="Collez le lien AlloCiné (ex: https://www.allocine.fr/film/fichefilm_gen_cfilm=...)" required>
+      <input type="url" id="new-link" placeholder="Collez le lien Allociné ici (ex: https://...)" required>
     </div>
     <div class="form-row">
-      <select id="new-section">
+      <select id="new-section" style="width: 100%;">
         <option value="01">Phase 1 : Le début de l'univers</option>
         <option value="02">Phase 2 : La montée en puissance</option>
         <option value="03">Phase 3 : La division et l'affrontement</option>
@@ -548,7 +595,7 @@
     </div>
     <div class="form-actions">
       <button type="button" class="btn-cancel" id="close-add-form">Annuler</button>
-      <button type="submit" class="btn-submit" id="btn-submit-text">Récupérer et ajouter</button>
+      <button type="submit" class="btn-submit">Ajouter à la liste</button>
     </div>
   </form>
 
@@ -564,22 +611,6 @@
   </div>
 </div>
 
-<!-- MODALE SYNOPSIS -->
-<div class="synopsis-overlay hidden" id="synopsis-overlay">
-  <div class="synopsis-modal">
-    <div class="synopsis-header">
-      <img id="synopsis-modal-poster" class="synopsis-poster" src="" alt="Affiche">
-      <div class="synopsis-title-box">
-        <h3 id="synopsis-modal-title"></h3>
-        <div class="synopsis-meta" id="synopsis-modal-meta"></div>
-      </div>
-    </div>
-    <div class="synopsis-body" id="synopsis-modal-text"></div>
-    <button type="button" class="btn-cancel" id="synopsis-close" style="width: 100%; margin-top: 5px;">Fermer</button>
-  </div>
-</div>
-
-<!-- MINI QUIZ -->
 <div class="quiz-overlay hidden" id="quiz-overlay">
   <div class="quiz-modal">
     <div class="quiz-header">🎬 Petit quiz !</div>
@@ -620,44 +651,44 @@
 
   const initialMcuData = [
     { section: "01", sectionTitle: "Phase 1 : Le début de l'univers", items: [
-        { id: "iron1", title: "Iron Man", year: "2008", icon: "⚙️", duration: 126, poster: "https://fr.web.img6.acsta.net/c_310_420/pictures/22/04/14/15/22/4106512.jpg", synopsis: "Tony Stark, milliardaire, inventeur et génie autoproclamé, est le PDG de Stark Industries. Lors d'un essai d'armes en plein désert, il est kidnappé..." },
-        { id: "hulk", title: "L'Incroyable Hulk", year: "2008", icon: "🧪", duration: 112, poster: "https://fr.web.img2.acsta.net/c_310_420/pictures/22/04/14/15/22/4123512.jpg", synopsis: "Le docteur Bruce Banner mène une vie désespérée dans l'ombre, cherchant un remède à la furie qui l'habite..." },
-        { id: "iron2", title: "Iron Man 2", year: "2010", icon: "⚙️", duration: 124, poster: "https://fr.web.img5.acsta.net/c_310_420/pictures/22/04/14/15/22/4144512.jpg", synopsis: "Alors que l'identité d'Iron Man a été révélée au monde entier, Tony Stark subit des pressions de toutes parts pour partager sa technologie..." },
-        { id: "thor1", title: "Thor", year: "2011", icon: "🔨", duration: 115, poster: "https://fr.web.img6.acsta.net/c_310_420/pictures/22/04/14/15/22/4172512.jpg", synopsis: "Le puissant Thor, guerrier arrogant et imprudent, est banni d'Asgard et envoyé sur Terre par son père Odin pour apprendre l'humilité." },
-        { id: "cap1", title: "Captain America: First Avenger", year: "2011", icon: "🛡️", duration: 124, poster: "https://fr.web.img4.acsta.net/c_310_420/pictures/22/04/14/15/22/4183512.jpg", synopsis: "Steve Rogers, frêle et chétif, se porte volontaire pour participer à un programme expérimental qui le transforme en super-soldat." },
-        { id: "avengers1", title: "Avengers", year: "2012", icon: "👥", duration: 143, poster: "https://fr.web.img5.acsta.net/c_310_420/pictures/22/04/14/15/22/4206512.jpg", synopsis: "Lorsque Nick Fury, directeur du S.H.I.E.L.D., entreprend de recruter une équipe pour empêcher la destruction du monde, les plus grands héros se rassemblent." }
+        { id: "iron1", title: "Iron Man", year: "2008", icon: "⚙️", duration: 126 },
+        { id: "hulk", title: "L'Incroyable Hulk", year: "2008", icon: "🧪", duration: 112 },
+        { id: "iron2", title: "Iron Man 2", year: "2010", icon: "⚙️", duration: 124 },
+        { id: "thor1", title: "Thor", year: "2011", icon: "🔨", duration: 115 },
+        { id: "cap1", title: "Captain America: First Avenger", year: "2011", icon: "🛡️", duration: 124 },
+        { id: "avengers1", title: "Avengers", year: "2012", icon: "👥", duration: 143 }
     ]},
     { section: "02", sectionTitle: "Phase 2 : La montée en puissance", items: [
-        { id: "iron3", title: "Iron Man 3", year: "2013", icon: "⚙️", duration: 130, poster: "https://fr.web.img2.acsta.net/c_310_420/pictures/22/04/14/15/22/4232512.jpg", synopsis: "Tony Stark est confronté à un ennemi redoutable, le Mandarin, qui attaque et détruit sa vie personnelle." },
-        { id: "cap2", title: "Captain America : Le Soldat de l'Hiver", year: "2014", icon: "🛡️", duration: 136, poster: "https://fr.web.img3.acsta.net/c_310_420/pictures/22/04/14/15/22/4252512.jpg", synopsis: "Après les événements cataclysmiques de New York, Steve Rogers vit tranquillement à Washington, jusqu'à ce qu'un collègue du S.H.I.E.L.D. soit attaqué." },
-        { id: "gotg1", title: "Les Gardiens de la Galaxie", year: "2014", icon: "🚀", duration: 121, poster: "https://fr.web.img2.acsta.net/c_310_420/pictures/22/04/14/15/22/4268512.jpg", synopsis: "L'aventurier téméraire Peter Quill se retrouve pourchassé par des chasseurs de primes après avoir volé un orbe mystérieux." },
-        { id: "avengers2", title: "Avengers : L'Ère d'Ultron", year: "2015", icon: "🤖", duration: 141, poster: "https://fr.web.img2.acsta.net/c_310_420/pictures/22/04/14/15/22/4294512.jpg", synopsis: "Tentant de relancer un programme de maintien de la paix jusque-là suspendu, Tony Stark commet une terrible erreur en créant Ultron." },
-        { id: "ant1", title: "Ant-Man", year: "2015", icon: "🐜", duration: 117, poster: "https://fr.web.img4.acsta.net/c_310_420/pictures/22/04/14/15/22/4311512.jpg", synopsis: "Doté d'une capacité extraordinaire - celle de rétrécir à volonté tout en décuplant sa force -, le cambrioleur Scott Lang doit aider son mentor à protéger son secret." }
+        { id: "iron3", title: "Iron Man 3", year: "2013", icon: "⚙️", duration: 130 },
+        { id: "cap2", title: "Captain America : Le Soldat de l'Hiver", year: "2014", icon: "🛡️", duration: 136 },
+        { id: "gotg1", title: "Les Gardiens de la Galaxie", year: "2014", icon: "🚀", duration: 121 },
+        { id: "avengers2", title: "Avengers : L'Ère d'Ultron", year: "2015", icon: "🤖", duration: 141 },
+        { id: "ant1", title: "Ant-Man", year: "2015", icon: "🐜", duration: 117 }
     ]},
     { section: "03", sectionTitle: "Phase 3 : La division et l'affrontement", items: [
-        { id: "civilwar", title: "Captain America: Civil War", year: "2016", icon: "⚔️", duration: 147, poster: "https://fr.web.img2.acsta.net/c_310_420/pictures/22/04/14/15/22/4333512.jpg", synopsis: "Les gouvernements du monde entier exigent la mise en place d'une instance dirigeante pour encadrer les actions des Avengers." },
-        { id: "docstrange1", title: "Doctor Strange", year: "2016", icon: "👁️", duration: 115, poster: "https://fr.web.img6.acsta.net/c_310_420/pictures/22/04/14/15/22/4351512.jpg", synopsis: "La vie du docteur Stephen Strange est bouleversée après un terrible accident de voiture qui le prive de l'usage de ses mains." },
-        { id: "gotg2", title: "Les Gardiens de la Galaxie Vol. 2", year: "2017", icon: "🚀", duration: 136, poster: "https://fr.web.img4.acsta.net/c_310_420/pictures/22/04/14/15/22/4369512.jpg", synopsis: "Les Gardiens doivent traverser les confins du cosmos pour comprendre le véritable mystère de la filiation de Peter Quill." },
-        { id: "spidey1", title: "Spider-Man: Homecoming", year: "2017", icon: "🕷️", duration: 133, poster: "https://fr.web.img2.acsta.net/c_310_420/pictures/22/04/14/15/22/4391512.jpg", synopsis: "Peter Parker tente de concilier sa vie de lycéen ordinaire et son alter-ego super-héroïque aux côtés de Tony Stark." },
-        { id: "thor3", title: "Thor: Ragnarok", year: "2017", icon: "⚡", duration: 130, poster: "https://fr.web.img6.acsta.net/c_310_420/pictures/22/04/14/15/22/4412512.jpg", synopsis: "Emprisonné à l'autre bout de l'univers, Thor se retrouve engagé dans une course contre la montre pour empêcher le Ragnarök." },
-        { id: "blackpanther1", title: "Black Panther", year: "2018", icon: "🐾", duration: 134, poster: "https://fr.web.img5.acsta.net/c_310_420/pictures/22/04/14/15/22/4435512.jpg", synopsis: "Après les événements de Civil War, T'Challa rentre chez lui dans la nation isolée du Wakanda pour prendre sa place sur le trône." },
-        { id: "infinitywar", title: "Avengers: Infinity War", year: "2018", icon: "💎", duration: 149, poster: "https://fr.web.img3.acsta.net/c_310_420/pictures/22/04/14/15/22/4458512.jpg", synopsis: "Les Avengers et leurs alliés doivent tout sacrifier pour vaincre le redoutable Thanos avant que son attaque fulgurante ne détruise l'univers." },
-        { id: "ant2", title: "Ant-Man et la Guêpe", year: "2018", icon: "🐜", duration: 118, poster: "https://fr.web.img5.acsta.net/c_310_420/pictures/22/04/14/15/22/4476512.jpg", synopsis: "Scott Lang jongle à nouveau entre sa vie de père et ses responsabilités de super-héros aux côtés de la Guêpe." },
-        { id: "capm", title: "Captain Marvel", year: "2019", icon: "⭐", duration: 123, poster: "https://fr.web.img6.acsta.net/c_310_420/pictures/22/04/14/15/22/4502512.jpg", synopsis: "L'histoire de Carol Danvers qui devient l'une des héroïnes les plus puissantes de l'univers lorsque la Terre se retrouve au cœur d'une guerre galactique." },
-        { id: "endgame", title: "Avengers: Endgame", year: "2019", icon: "⌛", duration: 181, poster: "https://fr.web.img4.acsta.net/c_310_420/pictures/22/04/14/15/22/4522512.jpg", synopsis: "Après les ravages causés par Thanos, l'univers est en ruine. Les Avengers restants unissent leurs forces pour inverser ses actes." },
-        { id: "loki1", title: "Loki (Saison 1)", year: "2021", icon: "⏱️", duration: 300, poster: "https://fr.web.img2.acsta.net/c_310_420/pictures/21/06/07/11/30/1446738.jpg", synopsis: "Le Dieu de la Malice sort de l'ombre de son frère pour entamer un voyage à travers le temps dans une mystérieuse agence." },
-        { id: "loki2", title: "Loki (Saison 2)", year: "2023", icon: "⏳", duration: 300, poster: "https://fr.web.img5.acsta.net/c_310_420/pictures/23/09/19/11/35/3342375.jpg", synopsis: "Loki navigue dans un multivers de plus en plus instable et dangereux pour sauver la TVA." },
-        { id: "spidey2", title: "Spider-Man: Far From Home", year: "2019", icon: "🕷️", duration: 129, poster: "https://fr.web.img4.acsta.net/c_310_420/pictures/19/06/18/12/10/2432247.jpg", synopsis: "Peter Parker décide de rejoindre ses meilleurs amis en vacances en Europe, mais ses plans sont chamboulés." }
+        { id: "civilwar", title: "Captain America: Civil War", year: "2016", icon: "⚔️", duration: 147 },
+        { id: "docstrange1", title: "Doctor Strange", year: "2016", icon: "👁️", duration: 115 },
+        { id: "gotg2", title: "Les Gardiens de la Galaxie Vol. 2", year: "2017", icon: "🚀", duration: 136 },
+        { id: "spidey1", title: "Spider-Man: Homecoming", year: "2017", icon: "🕷️", duration: 133 },
+        { id: "thor3", title: "Thor: Ragnarok", year: "2017", icon: "⚡", duration: 130 },
+        { id: "blackpanther1", title: "Black Panther", year: "2018", icon: "🐾", duration: 134 },
+        { id: "infinitywar", title: "Avengers: Infinity War", year: "2018", icon: "💎", duration: 149 },
+        { id: "ant2", title: "Ant-Man et la Guêpe", year: "2018", icon: "🐜", duration: 118 },
+        { id: "capm", title: "Captain Marvel", year: "2019", icon: "⭐", duration: 123 },
+        { id: "endgame", title: "Avengers: Endgame", year: "2019", icon: "⌛", duration: 181 },
+        { id: "loki1", title: "Loki (Saison 1)", year: "2021", icon: "⏱️", duration: 300 },
+        { id: "loki2", title: "Loki (Saison 2)", year: "2023", icon: "⏳", duration: 300 },
+        { id: "spidey2", title: "Spider-Man: Far From Home", year: "2019", icon: "🕷️", duration: 129 }
     ]},
     { section: "04", sectionTitle: "Phase 4 & 5 : La suite des événements", items: [
-        { id: "shangchi", title: "Shang-Chi et la Légende des Dix Anneaux", year: "2021", icon: "💍", duration: 132, poster: "https://fr.web.img5.acsta.net/c_310_420/pictures/21/08/16/11/49/5182955.jpg", synopsis: "Shang-Chi doit affronter son passé et l'organisation mystérieuse des Dix Anneaux qu'il pensait avoir laissée derrière lui." },
-        { id: "docstrange2", title: "Doctor Strange in the Multiverse of Madness", year: "2022", icon: "🌀", duration: 126, poster: "https://fr.web.img6.acsta.net/c_310_420/pictures/22/04/06/12/03/4915124.jpg", synopsis: "Doctor Strange voyage à travers des réalités alternatives pour affronter un nouvel adversaire menaçant." },
-        { id: "wakanda", title: "Black Panther: Wakanda Forever", year: "2022", icon: "🐾", duration: 161, poster: "https://fr.web.img2.acsta.net/c_310_420/pictures/22/10/12/16/22/3591241.jpg", synopsis: "Le peuple du Wakanda se bat pour protéger sa nation des puissances mondiales intervenant après la mort du roi T'Challa." },
-        { id: "gotg3", title: "Les Gardiens de la Galaxie Vol. 3", year: "2023", icon: "🦝", duration: 150, poster: "https://fr.web.img6.acsta.net/c_310_420/pictures/23/04/17/10/02/0593655.jpg", synopsis: "Notre bande de marginaux favorite s'installe à Knowhere, mais leurs vies sont bientôt bouleversées par le passé tumultueux de Rocket." },
-        { id: "marvels", title: "The Marvels", year: "2023", icon: "💫", duration: 105, poster: "https://fr.web.img2.acsta.net/c_310_420/pictures/23/10/16/16/22/0593452.jpg", synopsis: "Carol Danvers voit ses pouvoirs s'entremêler avec ceux de Kamala Khan et de Monica Rambeau." },
-        { id: "deadpool3", title: "Deadpool & Wolverine", year: "2024", icon: "⚔️", duration: 128, poster: "https://fr.web.img3.acsta.net/c_310_420/pictures/24/04/22/11/22/3342375.jpg", synopsis: "Un Deadpool apathique mène une vie civile terne jusqu'à ce que la TVA l'arrache à son quotidien pour une mission." },
-        { id: "f4", title: "Les Quatre Fantastiques", year: "2025", icon: "4️⃣", duration: 115, poster: "https://fr.web.img5.acsta.net/c_310_420/pictures/24/07/24/11/15/3342375.jpg", synopsis: "La célèbre première famille de super-héros fait son entrée dans le MCU." },
-        { id: "thunderbolts", title: "Thunderbolts*", year: "2025", icon: "⚡", duration: 126, poster: "https://fr.web.img2.acsta.net/c_310_420/pictures/24/09/24/10/12/3342375.jpg", synopsis: "Une équipe d'anti-héros et de criminels repentis est envoyée en mission secrète pour le compte du gouvernement." }
+        { id: "shangchi", title: "Shang-Chi et la Légende des Dix Anneaux", year: "2021", icon: "💍", duration: 132 },
+        { id: "docstrange2", title: "Doctor Strange in the Multiverse of Madness", year: "2022", icon: "🌀", duration: 126 },
+        { id: "wakanda", title: "Black Panther: Wakanda Forever", year: "2022", icon: "🐾", duration: 161 },
+        { id: "gotg3", title: "Les Gardiens de la Galaxie Vol. 3", year: "2023", icon: "🦝", duration: 150 },
+        { id: "marvels", title: "The Marvels", year: "2023", icon: "💫", duration: 105 },
+        { id: "deadpool3", title: "Deadpool & Wolverine", year: "2024", icon: "⚔️", duration: 128 },
+        { id: "f4", title: "Les Quatre Fantastiques", year: "2025", icon: "4️⃣", duration: 115 },
+        { id: "thunderbolts", title: "Thunderbolts*", year: "2025", icon: "⚡", duration: 126 }
     ]}
   ];
 
@@ -669,7 +700,33 @@
     iron2: { question: "Que synthétise Tony Stark pour se soigner et alimenter son armure ?", options: ["Le Vibranium", "Un tout nouvel élément chimique", "Le Tesseract", "Un fragment de météorite"], correct: 1 },
     thor1: { question: "Quel est le royaume d'origine de Thor ?", options: ["Asgard", "Midgard", "Jotunheim", "Vanaheim"], correct: 0 },
     cap1: { question: "Quel sérum transforme Steve Rogers en super-soldat ?", options: ["Le sérum du super-soldat", "L'Extremis", "Le Mimétite", "Le Terrigen"], correct: 0 },
-    avengers1: { question: "Qui envahit New York avec une armée d'aliens dans ce film ?", options: ["Thanos", "Loki", "Ultron", "Ronan"], correct: 1 }
+    avengers1: { question: "Qui envahit New York avec une armée d'aliens dans ce film ?", options: ["Thanos", "Loki", "Ultron", "Ronan"], correct: 1 },
+    iron3: { question: "Qui se cache réellement derrière le personnage du Mandarin ?", options: ["Un acteur nommé Trevor Slattery", "Le vrai terroriste Mandarin", "Aldrich Killian en personne", "Justin Hammer"], correct: 0 },
+    cap2: { question: "Quelle organisation s'avère infiltrée par Hydra ?", options: ["Le SHIELD", "Le SWORD", "Le SSR", "L'armée américaine"], correct: 0 },
+    gotg1: { question: "Comment s'appelle le raton laveur du groupe ?", options: ["Groot", "Rocket", "Drax", "Yondu"], correct: 1 },
+    avengers2: { question: "Qui crée Ultron ?", options: ["Nick Fury", "Tony Stark et Bruce Banner", "Hydra", "Le Baron Zemo"], correct: 1 },
+    ant1: { question: "Comment s'appelle le costume qui permet à Scott Lang de rétrécir ?", options: ["Le costume Ant-Man", "Le costume Iron Man", "L'exosquelette Stark", "La combinaison Pym"], correct: 0 },
+    civilwar: { question: "Quel accord divise les Avengers dans ce film ?", options: ["Les Accords de Sokovie", "Le Traité d'Asgard", "Le Pacte du Wakanda", "L'Accord de New York"], correct: 0 },
+    docstrange1: { question: "Quel était le métier de Stephen Strange avant de devenir sorcier ?", options: ["Avocat", "Chirurgien", "Physicien", "Pilote"], correct: 1 },
+    gotg2: { question: "Qui s'avère être le père biologique de Peter Quill ?", options: ["Yondu", "Ego", "Thanos", "Ronan"], correct: 1 },
+    spidey1: { question: "Qui est le méchant principal, le Vautour ?", options: ["Adrian Toomes", "Norman Osborn", "Otto Octavius", "Quentin Beck"], correct: 0 },
+    thor3: { question: "Quelle sœur de Thor est révélée dans ce film ?", options: ["Hela", "Sif", "Valkyrie", "Angela"], correct: 0 },
+    blackpanther1: { question: "Comment s'appelle le pays natal de T'Challa ?", options: ["Le Wakanda", "Le Genosha", "La Latveria", "La Sokovie"], correct: 0 },
+    infinitywar: { question: "Combien de Pierres d'Infini Thanos réunit-il à la fin du film ?", options: ["4", "5", "6", "3"], correct: 2 },
+    ant2: { question: "Qui est la première Wasp, mère de Hope ?", options: ["Janet van Dyne", "Hope van Dyne", "Ava Starr", "Maggie Lang"], correct: 0 },
+    capm: { question: "Quel est le vrai nom de Captain Marvel ?", options: ["Carol Danvers", "Maria Rambeau", "Monica Rambeau", "Wendy Lawson"], correct: 0 },
+    endgame: { question: "Que doivent réunir les Avengers pour annuler le Snap ?", options: ["Les Pierres d'Infini", "Le Bâton de Loki", "Le Tesseract seul", "Le Cœur du Wakanda"], correct: 0 },
+    loki1: { question: "Quelle organisation recrute Loki après son arrestation temporelle ?", options: ["Le SHIELD", "La TVA (Autorité de Variance Temporelle)", "Hydra", "Le SWORD"], correct: 1 },
+    loki2: { question: "Quel phénomène menace de détruire la TVA dans cette saison ?", options: ["Des tressages temporels instables", "Une invasion Skrull", "Le retour de Thanos", "Un virus informatique"], correct: 0 },
+    spidey2: { question: "Qui se cache derrière les illusions de Mysterio ?", options: ["Quentin Beck", "Norman Osborn", "Otto Octavius", "Adrian Toomes"], correct: 0 },
+    shangchi: { question: "Quel objet mystique le père de Shang-Chi possède-t-il ?", options: ["Les Dix Anneaux", "Le Marteau de Thor", "La Gemme de l'Âme", "Le Bâton d'Ebony Maw"], correct: 0 },
+    docstrange2: { question: "Quelle sorcière traque Docteur Strange à travers le multivers ?", options: ["Agatha Harkness", "Wanda Maximoff, la Sorcière Rouge", "Clea", "America Chavez elle-même"], correct: 1 },
+    wakanda: { question: "Qui devient la nouvelle Black Panther dans ce film ?", options: ["Shuri", "Okoye", "Nakia", "Ramonda"], correct: 0 },
+    gotg3: { question: "Quel groupe cherche à retracer les origines de Rocket ?", options: ["Le Haut Évolutionnaire et sa Société", "Le Corps Nova", "Les Ravageurs", "Le Collectionneur"], correct: 0 },
+    marvels: { question: "Quel trio de héroïnes échange de place à chaque usage de ses pouvoirs ?", options: ["Carol Danvers, Monica Rambeau et Kamala Khan", "Carol Danvers, Wanda et Kamala Khan", "Monica, Wanda et Kamala", "Carol, Nebula et Kamala"], correct: 0 },
+    deadpool3: { question: "Avec quel héros Deadpool fait-il équipe dans ce film ?", options: ["Wolverine", "Cable", "Gambit", "Colossus"], correct: 0 },
+    f4: { question: "Quelle entité cosmique menace la Terre dans ce film ?", options: ["Galactus", "Kang", "Annihilus", "Le Docteur Fatalis"], correct: 0 },
+    thunderbolts: { question: "De qui est principalement composée cette équipe d'antihéros ?", options: ["D'anciens agents et vilains recrutés par Valentina de Fontaine", "Des X-Men", "Des jeunes Avengers", "Des Eternals"], correct: 0 }
   };
 
   let userProgress = {};
@@ -699,7 +756,12 @@
     Object.keys(customItemsData).forEach(key => {
       const item = customItemsData[key];
       const sec = data.find(s => s.section === item.section);
-      if (sec) sec.items.push(item);
+      if (sec) {
+        // Empêcher d'ajouter deux fois le même ID si la base renvoie un doublon ou synchronise mal
+        if (!sec.items.some(existing => existing.id === item.id)) {
+          sec.items.push(item);
+        }
+      }
     });
     return data;
   }
@@ -739,7 +801,7 @@
       if (!item) return '';
       return `
         <div class="hidden-item-row">
-          <div class="hidden-item-info"><span>🎬</span><span>${item.title} (${item.year})</span></div>
+          <div class="hidden-item-info"><span>${item.icon}</span><span>${item.link ? `<a href="${item.link}" target="_blank" style="color:var(--text-muted);">${item.title || item.link}</a>` : item.title}</span></div>
           <button class="restore-btn" onclick="restoreItem('${item.id}')">↩️ Restaurer</button>
         </div>
       `;
@@ -791,28 +853,11 @@
     if (box) box.classList.toggle('open');
   }
 
-  // --- OUVERTURE DE LA MODALE SYNOPSIS ---
-  function openSynopsis(itemId) {
-    const rawData = getRawCombinedMcuData();
-    const allItems = rawData.flatMap(sec => sec.items);
-    const item = allItems.find(i => i.id === itemId);
-    if (!item) return;
-
-    document.getElementById('synopsis-modal-title').innerText = item.title;
-    document.getElementById('synopsis-modal-meta').innerText = `${item.year} · Durée : ${item.duration ? item.duration + ' min' : 'N/C'}`;
-    document.getElementById('synopsis-modal-poster').src = item.poster || 'https://via.placeholder.com/90x130?text=Pas+d%27affiche';
-    document.getElementById('synopsis-modal-text').innerText = item.synopsis || "Aucun synopsis disponible pour ce film.";
-    document.getElementById('synopsis-overlay').classList.remove('hidden');
-  }
-
-  document.getElementById('synopsis-close').addEventListener('click', () => {
-    document.getElementById('synopsis-overlay').classList.add('hidden');
-  });
-
   function itemMatchesFilters(item, itemState, itemRatings) {
     if (searchQuery) {
       const normalize = s => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-      if (!normalize(item.title).includes(normalize(searchQuery))) return false;
+      const searchTarget = item.link ? `${item.title} ${item.link}` : item.title;
+      if (!normalize(searchTarget).includes(normalize(searchQuery))) return false;
     }
     switch (filterMode) {
       case 'doneAly': return !!itemState.u1;
@@ -856,6 +901,7 @@
         .sort((a, b) => a.__order - b.__order);
 
       const sectionFragmentCards = [];
+      let sectionVisibleCount = 0;
       let sectionDoneCount = 0;
 
       sortedItems.forEach((item, posIndex) => {
@@ -876,6 +922,7 @@
         if (bothDone) totalMinutesBoth += (item.duration || 120);
 
         if (!itemMatchesFilters(item, itemState, itemRatings)) return;
+        sectionVisibleCount++;
         anyVisibleAtAll = true;
 
         const itemComments = commentsData[item.id] || {};
@@ -888,7 +935,17 @@
           dateLine = `<div class="item-watch-date">👁️ Vu par ${parts.join(' · ')}</div>`;
         }
 
-        const posterImg = item.poster ? `<img src="${item.poster}" class="item-poster-thumb" alt="Affiche">` : `<div class="item-icon">🎬</div>`;
+        const displayTitle = item.link 
+          ? `<a href="${item.link}" target="_blank" rel="noopener noreferrer">${item.title || item.link}</a>` 
+          : item.title;
+
+        const posterHtml = item.poster 
+          ? `<img src="${item.poster}" alt="${item.title}" class="item-poster">` 
+          : `<div class="item-icon">${item.icon || '🎬'}</div>`;
+
+        const synopsisHtml = item.synopsis 
+  ? `<button class="btn-synopsis" onclick="openSynopsisModal(event, '${btoa(encodeURIComponent(item.synopsis))}')">📖 Synopsis</button>` 
+  : '';
 
         const card = document.createElement('div');
         card.className = `item-card ${bothDone ? 'both-done' : ''}`;
@@ -899,18 +956,18 @@
                 <button class="arrow-btn" ${posIndex === 0 ? 'disabled' : ''} onclick="moveItem('${item.id}', '${posIndex > 0 ? sortedItems[posIndex - 1].id : ''}')">▲</button>
                 <button class="arrow-btn" ${posIndex === sortedItems.length - 1 ? 'disabled' : ''} onclick="moveItem('${item.id}', '${posIndex < sortedItems.length - 1 ? sortedItems[posIndex + 1].id : ''}')">▼</button>
               </div>
-              ${posterImg}
-              <div style="min-width: 0; flex-grow: 1;">
-                <div class="item-title">${item.title}</div>
-                <div class="item-details">${item.year} · ${item.duration ? item.duration + ' min' : ''}</div>
+              ${posterHtml}
+              <div class="item-info-content">
+                <div class="item-title">${displayTitle}</div>
+                <div class="item-details">${item.year || ''} ${item.duration ? `• ${item.duration} min` : ''}</div>
+                ${synopsisHtml}
                 ${dateLine}
               </div>
-              <button class="synopsis-trigger-btn" onclick="openSynopsis('${item.id}')">📖 Synopsis</button>
             </div>
             <div class="checkbox-group">
               <button class="user-btn u1 ${itemState.u1 ? 'active' : ''}" onclick="toggleUser('${item.id}', 'u1')">${USER_NAMES.u1}</button>
               <button class="user-btn u2 ${itemState.u2 ? 'active' : ''}" onclick="toggleUser('${item.id}', 'u2')">${USER_NAMES.u2}</button>
-              <button class="delete-btn" onclick="deleteItem('${item.id}')" title="Supprimer ce film">🗑️</button>
+              <button class="delete-btn" onclick="deleteItem('${item.id}')" title="Supprimer cet élément">🗑️</button>
             </div>
           </div>
           <div class="rating-section">
@@ -924,11 +981,11 @@
           <div class="comments-box" id="comments-${item.id}">
             <div>
               <span class="comment-label">Avis de ${USER_NAMES.u1}</span>
-              <textarea placeholder="Ton avis sur ce film..." onblur="setComment('${item.id}', 'u1', this.value)">${itemComments.u1 || ''}</textarea>
+              <textarea placeholder="Ton avis sur cet élément..." onblur="setComment('${item.id}', 'u1', this.value)">${itemComments.u1 || ''}</textarea>
             </div>
             <div>
               <span class="comment-label">Avis de ${USER_NAMES.u2}</span>
-              <textarea placeholder="Ton avis sur ce film..." onblur="setComment('${item.id}', 'u2', this.value)">${itemComments.u2 || ''}</textarea>
+              <textarea placeholder="Ton avis sur cet élément..." onblur="setComment('${item.id}', 'u2', this.value)">${itemComments.u2 || ''}</textarea>
             </div>
           </div>
         `;
@@ -953,7 +1010,7 @@
     });
 
     if (!anyVisibleAtAll) {
-      listContainer.innerHTML = `<div class="no-results">Aucun film ne correspond à ta recherche ou à ce filtre.</div>`;
+      listContainer.innerHTML = `<div class="no-results">Aucun élément ne correspond à ta recherche ou à ce filtre.</div>`;
     }
 
     document.getElementById('total-count').innerText = totalItems;
@@ -961,8 +1018,13 @@
     document.getElementById('progress-fill').style.width = (totalItems > 0 ? (bothDoneItems / totalItems) * 100 : 0) + '%';
 
     document.getElementById('stat-avg').innerText = countRatings > 0 ? (sumRatings / countRatings).toFixed(1) + ' ★' : '-';
-    document.getElementById('stat-fav-aly').innerText = bestAlyItem ? `🎬 ${bestAlyItem.title}` : '-';
-    document.getElementById('stat-fav-ewan').innerText = bestEwanItem ? `🎬 ${bestEwanItem.title}` : '-';
+    
+    const favAlyName = bestAlyItem ? (bestAlyItem.title || 'Lien') : '-';
+    document.getElementById('stat-fav-aly').innerText = bestAlyItem ? `${bestAlyItem.icon || '🎬'} ${favAlyName}` : '-';
+    
+    const favEwanName = bestEwanItem ? (bestEwanItem.title || 'Lien') : '-';
+    document.getElementById('stat-fav-ewan').innerText = bestEwanItem ? `${bestEwanItem.icon || '🎬'} ${favEwanName}` : '-';
+    
     const h = Math.floor(totalMinutesBoth / 60), m = totalMinutesBoth % 60;
     document.getElementById('stat-time').innerText = totalMinutesBoth > 0 ? `${h}h${m > 0 ? m.toString().padStart(2, '0') : ''}` : '-';
 
@@ -992,17 +1054,20 @@
     countEl.innerText = `${entries.length} vus`;
 
     if (entries.length === 0) {
-      list.innerHTML = `<div class="empty-timeline">Aucun film marqué comme vu pour l'instant.</div>`;
+      list.innerHTML = `<div class="empty-timeline">Aucun élément marqué comme vu pour l'instant.</div>`;
       return;
     }
 
-    list.innerHTML = entries.map(e => `
-      <div class="timeline-entry">
-        <div class="timeline-date">${new Date(e.ts).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })}</div>
-        <div class="timeline-title">🎬 ${e.item.title}</div>
-        <div class="timeline-who">Vu par ${e.who.join(' & ')}</div>
-      </div>
-    `).join('');
+    list.innerHTML = entries.map(e => {
+      const displayTitle = e.item.link ? `<a href="${e.item.link}" target="_blank" style="color:var(--text-main);">${e.item.title || e.item.link}</a>` : e.item.title;
+      return `
+        <div class="timeline-entry">
+          <div class="timeline-date">${new Date(e.ts).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })}</div>
+          <div class="timeline-title">${e.item.icon || '🎬'} ${displayTitle}</div>
+          <div class="timeline-who">Vu par ${e.who.join(' & ')}</div>
+        </div>
+      `;
+    }).join('');
   }
 
   function renderTop5() {
@@ -1023,29 +1088,33 @@
     const top5 = scored.slice(0, 5);
 
     if (top5.length === 0) {
-      container.innerHTML = `<div class="empty-top5">Notez quelques films pour voir apparaître le classement !</div>`;
+      container.innerHTML = `<div class="empty-top5">Notez quelques éléments pour voir apparaître le classement !</div>`;
       return;
     }
 
     const medals = ['🥇', '🥈', '🥉'];
     const rankClasses = ['gold', 'silver', 'bronze'];
-    container.innerHTML = top5.map((entry, i) => `
-      <div class="top5-entry">
-        <div class="top5-rank ${rankClasses[i] || ''}">${medals[i] || (i + 1) + 'e'}</div>
-        <div class="top5-icon">🎬</div>
-        <div class="top5-info"><div class="top5-title">${entry.item.title}</div></div>
-        <div class="top5-score">★ ${entry.avg.toFixed(1)}</div>
-      </div>
-    `).join('');
+    container.innerHTML = top5.map((entry, i) => {
+      const displayTitle = entry.item.link ? `<a href="${entry.item.link}" target="_blank" style="color:var(--text-main);">${entry.item.title || entry.item.link}</a>` : entry.item.title;
+      return `
+        <div class="top5-entry">
+          <div class="top5-rank ${rankClasses[i] || ''}">${medals[i] || (i + 1) + 'e'}</div>
+          <div class="top5-icon">${entry.item.icon || '🎬'}</div>
+          <div class="top5-info"><div class="top5-title">${displayTitle}</div></div>
+          <div class="top5-score">★ ${entry.avg.toFixed(1)}</div>
+        </div>
+      `;
+    }).join('');
   }
 
   function showQuiz(itemId, item) {
     const q = quizData[itemId];
     if (!q) return;
-    document.getElementById('quiz-movie').innerText = `🎬 ${item.title}`;
+    const displayTitle = item.link ? (item.title || item.link) : item.title;
+    document.getElementById('quiz-movie').innerText = `${item.icon || '🎬'} ${displayTitle}`;
     document.getElementById('quiz-question').innerText = q.question;
     document.getElementById('quiz-options').innerHTML = q.options
-      .map((opt, idx) => `<button class="quiz-option-btn" onclick="answerQuiz('${itemId}', ${idx})">${opt}</button>`)
+      .map((opt, i) => `<button class="quiz-option-btn" onclick="answerQuiz('${itemId}', ${i})">${opt}</button>`)
       .join('');
     const feedback = document.getElementById('quiz-feedback');
     feedback.innerText = '';
@@ -1116,83 +1185,138 @@
   openFormBtn.addEventListener('click', () => addForm.classList.remove('hidden'));
   closeFormBtn.addEventListener('click', () => addForm.classList.add('hidden'));
 
-  // --- AUTOMATISATION DE L'AJOUT DEPUIS UN LIEN ALLOCINÉ ---
+  let isSubmitting =- false; // Verrou
+
   addForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const urlInput = document.getElementById('new-allocine-url').value.trim();
-    const section = document.getElementById('new-section').value;
-    const submitBtn = document.getElementById('btn-submit-text');
+    
+    // Si une soumission est déjà en cours, on bloque net !
+    if (isSubmitting) return;
+    isSubmitting = true;
 
-    if (!urlInput.includes('allocine.fr')) {
-      alert("Veuillez entrer un lien AlloCiné valide.");
+    const linkValue = document.getElementById('new-link').value.trim();
+    const sectionValue = document.getElementById('new-section').value;
+
+    if (!linkValue) {
+      isSubmitting = false;
       return;
     }
 
-    submitBtn.innerText = "Récupération en cours...";
+    const submitBtn = addForm.querySelector('.btn-submit');
+    const originalText = submitBtn ? submitBtn.innerText : 'Ajouter';
+    if (submitBtn) {
+      submitBtn.innerText = 'Chargement...';
+      submitBtn.disabled = true;
+    }
 
     try {
-      // Extraction de l'ID du film depuis l'URL AlloCiné
-      const match = urlInput.match(/cfilm=(\d+)/) || urlInput.match(/\/film\/fichefilm_gen_cfilm[=:](\d+)/) || urlInput.match(/\/(\d+)\/?$/);
-      const filmIdNum = match ? match.inputs ? match[1] : match[1] : 'custom_' + Date.now();
-      const uniqueId = 'custom_' + filmIdNum;
+      const response = await fetch(`https://addmoviefromallocine-37mwarfkla-uc.a.run.app?url=${encodeURIComponent(linkValue)}`);
+      
+      if (!response.ok) {
+        throw new Error('Erreur HTTP: ' + response.status);
+      }
 
-      // Génération d'un titre et de métadonnées par défaut propres
-      const cleanTitle = prompt("Entrez le titre du film :", "Nouveau film") || "Film personnalisé";
-      const year = prompt("Entrez l'année de sortie :", "2025") || "2025";
-      const duration = parseInt(prompt("Entrez la durée en minutes (ex: 120) :", "120")) || 120;
-      const synopsis = prompt("Entrez un court synopsis :", "Synopsis personnalisé du film.") || "";
+      const movieData = await response.json();
+
+      if (!movieData || !movieData.title || movieData.title.trim() === '') {
+        
+        isSubmitting = false;
+        if (submitBtn) {
+          submitBtn.innerText = originalText;
+          submitBtn.disabled = false;
+        }
+        return;
+      }
+
+      const id = 'custom_' + Date.now();
 
       const newItem = {
-        id: uniqueId,
-        title: cleanTitle,
-        year: year,
+        id: id,
+        title: movieData.title,
+        link: linkValue,
+        year: movieData.year || "",
         icon: "🎬",
-        duration: duration,
-        poster: "",
-        synopsis: synopsis,
-        section: section
+        section: sectionValue,
+        duration: movieData.duration || 120,
+        synopsis: movieData.synopsis || "Aucun synopsis disponible",
+        poster: movieData.poster || ""
       };
 
-      await db.ref(`mcu_custom_items/${uniqueId}`).set(newItem);
+      await db.ref(`mcu_custom_items/${id}`).set(newItem);
 
-      document.getElementById('new-allocine-url').value = '';
+      addForm.reset();
       addForm.classList.add('hidden');
-      alert("Film ajouté avec succès !");
-    } catch (err) {
-      console.error(err);
-      alert("Une erreur est survenue lors de l'ajout.");
+
+    } catch (error) {
+      console.error("Erreur :", error);
+      alert("Une erreur est survenue.");
     } finally {
-      submitBtn.innerText = "Récupérer et ajouter";
+      isSubmitting = false; // On libère le verrou à la fin
+      if (submitBtn) {
+        submitBtn.innerText = originalText;
+        submitBtn.disabled = false;
+      }
     }
   });
 
-  // --- GESTION DES THÈMES ---
   const themeToggleBtn = document.getElementById('theme-toggle');
   const themeMenu = document.getElementById('theme-menu');
 
-  themeToggleBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    themeMenu.classList.toggle('hidden');
-  });
+  themeToggleBtn.addEventListener('click', (e) => { e.stopPropagation(); themeMenu.classList.toggle('hidden'); });
+  document.addEventListener('click', (e) => { if (!e.target.closest('.theme-switcher')) themeMenu.classList.add('hidden'); });
 
-  document.addEventListener('click', () => {
-    if (!themeMenu.classList.contains('hidden')) themeMenu.classList.add('hidden');
-  });
-
-  document.querySelectorAll('.theme-option').forEach(option => {
-    option.addEventListener('click', () => {
-      const theme = option.getAttribute('data-theme');
-      document.body.className = theme === 'default' ? '' : `theme-${theme}`;
-      localStorage.setItem('mcu-theme', theme);
+  document.querySelectorAll('.theme-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      applyTheme(opt.dataset.theme);
       themeMenu.classList.add('hidden');
     });
   });
 
-  // Charger le thème enregistré
-  const savedTheme = localStorage.getItem('mcu-theme');
-  if (savedTheme && savedTheme !== 'default') {
-    document.body.className = `theme-${savedTheme}`;
+  function applyTheme(theme) {
+    document.body.className = theme !== 'default' ? `theme-${theme}` : '';
+    localStorage.setItem('mcu-theme', theme);
   }
+  applyTheme(localStorage.getItem('mcu-theme') || 'default');
+  
+  // Fonction pour ouvrir la bulle flottante
+window.openSynopsisModal = function(event, encodedSynopsis) {
+  event.stopPropagation();
+  const realSynopsis = decodeURIComponent(atob(encodedSynopsis));
+
+  // Vérifie si la modale existe déjà dans la page, sinon on la crée dynamiquement
+  let modal = document.getElementById('global-synopsis-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'global-synopsis-modal';
+    modal.className = 'synopsis-modal';
+    modal.innerHTML = `
+      <div class="synopsis-modal-content">
+        <button class="synopsis-modal-close" onclick="closeSynopsisModal()">&times;</button>
+        <h3 style="margin-top:0; margin-bottom:12px; color:#fff;">Synopsis</h3>
+        <p id="global-synopsis-text" style="line-height: 1.5; color: #cbd5e1; margin:0;"></p>
+      </div>
+    `;
+    document.body.appendChild(modal);
+
+    // Fermer en cliquant en dehors de la boîte
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeSynopsisModal();
+    });
+  }
+
+  // Injecte le texte et affiche la modale
+  document.getElementById('global-synopsis-text').innerText = realSynopsis;
+  modal.classList.add('active');
+};
+
+// Fonction pour fermer la bulle
+window.closeSynopsisModal = function() {
+  const modal = document.getElementById('global-synopsis-modal');
+  if (modal) {
+    modal.classList.remove('active');
+  }
+};
 </script>
+
 </body>
 </html>
