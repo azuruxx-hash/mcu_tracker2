@@ -1131,45 +1131,42 @@
     submitBtn.innerText = "Récupération en cours...";
 
     try {
-      // Extraction de l'ID du film depuis l'URL AlloCiné (ex: fichefilm_gen_cfilm=123456.html ou similaire)
-      const match = urlInput.match(/cfilm=(\d+)/) || urlInput.match(/\/(\d+)\//);
-      let uniqueId = match ? `custom_${match[1]}` : `custom_${Date.now()}`;
+      // Extraction de l'ID du film depuis l'URL AlloCiné
+      const match = urlInput.match(/cfilm=(\d+)/) || urlInput.match(/\/film\/fichefilm_gen_cfilm[=:](\d+)/) || urlInput.match(/\/(\d+)\/?$/);
+      const filmIdNum = match ? match.inputs ? match[1] : match[1] : 'custom_' + Date.now();
+      const uniqueId = 'custom_' + filmIdNum;
 
-      // Simulation d'une récupération automatique des métadonnées basée sur l'URL ou valeur par défaut modifiable
-      let title = "Nouveau film";
-      let year = new Date().getFullYear().toString();
-      let duration = 120;
-      let synopsis = "Film ajouté automatiquement via le lien AlloCiné.";
-      let poster = "https://via.placeholder.com/310x420?text=AlloCine";
+      // Génération d'un titre et de métadonnées par défaut propres
+      const cleanTitle = prompt("Entrez le titre du film :", "Nouveau film") || "Film personnalisé";
+      const year = prompt("Entrez l'année de sortie :", "2025") || "2025";
+      const duration = parseInt(prompt("Entrez la durée en minutes (ex: 120) :", "120")) || 120;
+      const synopsis = prompt("Entrez un court synopsis :", "Synopsis personnalisé du film.") || "";
 
-      // On extrait un nom approximatif ou on utilise une requête fetch si proxy disponible, 
-      // ici on structure l'objet à enregistrer dans Firebase
       const newItem = {
         id: uniqueId,
-        title: title,
+        title: cleanTitle,
         year: year,
         icon: "🎬",
         duration: duration,
-        poster: poster,
+        poster: "",
         synopsis: synopsis,
         section: section
       };
 
       await db.ref(`mcu_custom_items/${uniqueId}`).set(newItem);
 
-      // Réinitialisation du formulaire
       document.getElementById('new-allocine-url').value = '';
       addForm.classList.add('hidden');
       alert("Film ajouté avec succès !");
-    } catch (error) {
-      console.err(error);
-      alert("Erreur lors de l'ajout du film.");
+    } catch (err) {
+      console.error(err);
+      alert("Une erreur est survenue lors de l'ajout.");
     } finally {
       submitBtn.innerText = "Récupérer et ajouter";
     }
   });
 
-  // --- SÉLECTEUR DE THÈMES ---
+  // --- GESTION DES THÈMES ---
   const themeToggleBtn = document.getElementById('theme-toggle');
   const themeMenu = document.getElementById('theme-menu');
 
@@ -1186,16 +1183,16 @@
     option.addEventListener('click', () => {
       const theme = option.getAttribute('data-theme');
       document.body.className = theme === 'default' ? '' : `theme-${theme}`;
-      localStorage.setItem('mcu-selected-theme', theme);
+      localStorage.setItem('mcu-theme', theme);
       themeMenu.classList.add('hidden');
     });
   });
 
-  const savedTheme = localStorage.getItem('mcu-selected-theme');
+  // Charger le thème enregistré
+  const savedTheme = localStorage.getItem('mcu-theme');
   if (savedTheme && savedTheme !== 'default') {
     document.body.className = `theme-${savedTheme}`;
   }
 </script>
 </body>
 </html>
-```[cite: 2]
