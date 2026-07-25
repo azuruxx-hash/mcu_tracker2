@@ -8,9 +8,9 @@
     /* --- VARIABLES GLOBALES DE BASE --- */
     :root {
       --bg-color: #0b0d17;
-      --bg-texture: radial-gradient(circle at 50% 0%, #151a2f, transparent 70%);
+      --bg-texture: radial-gradient(circle at 50% 0%, #151a2f, transparent 70%), repeating-linear-gradient(135deg, rgba(255,94,54,0.025) 0px, rgba(255,94,54,0.025) 1px, transparent 1px, transparent 30px), repeating-linear-gradient(45deg, rgba(16,185,129,0.02) 0px, rgba(16,185,129,0.02) 1px, transparent 1px, transparent 34px);
       --card-bg: rgba(19, 23, 40, 0.85);
-      --card-gradient: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+      --card-gradient: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, transparent 100%), repeating-linear-gradient(135deg, rgba(255,94,54,0.025) 0px, rgba(255,94,54,0.025) 1px, transparent 1px, transparent 26px);
       --card-border: #20263f;
       --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
       --card-hover-shadow: 0 8px 25px var(--hero-glow);
@@ -230,14 +230,29 @@
     .theme-option:hover { background-color: rgba(255,255,255,0.08); transform: translateX(5px); }
     .theme-swatch { width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; border: 2px solid rgba(255,255,255,0.3); box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
 
-    body.theme-ironman { --bg-color: #120302; --bg-texture: repeating-linear-gradient(45deg, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 2px, transparent 2px, transparent 4px), linear-gradient(135deg, #2b0806 0%, #0a0100 100%); --hero-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' stroke='%23ffd700' stroke-width='4' fill='none'/%3E%3Ccircle cx='50' cy='50' r='30' stroke='%23ff2a00' stroke-width='6' fill='none'/%3E%3Cpolygon points='50,15 80,65 20,65' fill='%234fc3f7'/%3E%3Ccircle cx='50' cy='50' r='12' fill='%23ffffff'/%3E%3C/svg%3E"); --card-bg: rgba(30, 8, 7, 0.9); --card-gradient: linear-gradient(145deg, rgba(255, 215, 0, 0.05) 0%, rgba(255, 0, 0, 0.02) 100%); --card-border: #61130d; --text-muted: #e5b376; --accent-main: #ff2a00; --accent-secondary: #ffd700; --accent-user1: #ffd700; --accent-user2: #ff2a00; --accent-both: #4fc3f7; --star-color: #ffd700; --hero-glow: rgba(255, 215, 0, 0.3); --card-hover-shadow: 0 10px 25px rgba(255, 42, 0, 0.3), inset 0 0 15px rgba(255, 215, 0, 0.1); }
-    body.theme-cap { --bg-color: #060b17; --bg-texture: linear-gradient(to bottom, #09122b, #04070f); --hero-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%23e03131'/%3E%3Ccircle cx='50' cy='50' r='36' fill='%23ffffff'/%3E%3Ccircle cx='50' cy='50' r='26' fill='%23e03131'/%3E%3Ccircle cx='50' cy='50' r='16' fill='%233b5bdb'/%3E%3Cpolygon points='50,35 54,46 65,46 56,53 59,64 50,57 41,64 44,53 35,46 46,46' fill='%23ffffff'/%3E%3C/svg%3E"); --card-bg: rgba(12, 20, 43, 0.9); --card-gradient: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, transparent 100%); --card-border: #1a2a5c; --text-muted: #a5bce6; --accent-main: #e03131; --accent-secondary: #3b5bdb; --accent-user1: #3b5bdb; --accent-user2: #e03131; --accent-both: #f8f9fa; --star-color: #f1f3f5; --hero-glow: rgba(59, 91, 219, 0.3); --card-hover-shadow: 0 8px 25px rgba(59, 91, 219, 0.25), 0 0 10px rgba(224, 49, 49, 0.2); }
-    body.theme-hulk { --bg-color: #030d05; --bg-texture: linear-gradient(to bottom right, #051a09, #010502); --hero-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='12' fill='%2340c057'/%3E%3Cpath d='M50 10 L50 30 M50 70 L50 90 M10 50 L30 50 M70 50 L90 50' stroke='%2340c057' stroke-width='10' stroke-linecap='round'/%3E%3Cpath d='M22 22 L36 36 M64 64 L78 78 M22 78 L36 64 M64 36 L78 22' stroke='%239c36b5' stroke-width='8' stroke-linecap='round'/%3E%3C/svg%3E"); --card-bg: rgba(6, 26, 12, 0.9); --card-gradient: linear-gradient(135deg, rgba(156, 54, 181, 0.05) 0%, rgba(64, 192, 87, 0.02) 100%); --card-border: #113d1e; --text-muted: #8cd69e; --accent-main: #40c057; --accent-secondary: #9c36b5; --accent-user1: #40c057; --accent-user2: #9c36b5; --accent-both: #82c91e; --star-color: #40c057; --hero-glow: rgba(64, 192, 87, 0.3); --card-hover-shadow: 0 10px 30px rgba(64, 192, 87, 0.2), inset 0 0 15px rgba(156, 54, 181, 0.15); }
-    body.theme-thor { --bg-color: #020712; --bg-texture: linear-gradient(to bottom, #061126, #010308); --hero-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 5 L20 40 H45 L35 95 L80 45 H55 Z' fill='%2374c0fc'/%3E%3C/svg%3E"); --card-bg: rgba(6, 18, 40, 0.9); --card-gradient: linear-gradient(180deg, rgba(116, 192, 252, 0.05) 0%, transparent 100%); --card-border: #0d2654; --text-muted: #9bc7f0; --accent-main: #1971c2; --accent-secondary: #f59f00; --accent-user1: #1971c2; --accent-user2: #f59f00; --accent-both: #74c0fc; --star-color: #74c0fc; --hero-glow: rgba(116, 192, 252, 0.4); --card-hover-shadow: 0 5px 30px rgba(116, 192, 252, 0.3), 0 0 10px rgba(255,255,255,0.2); }
-    body.theme-panther { --bg-color: #050208; --bg-texture: repeating-linear-gradient(45deg, rgba(255,255,255,0.01) 0px, rgba(255,255,255,0.01) 2px, transparent 2px, transparent 6px); --hero-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,10 85,35 75,85 50,95 25,85 15,35' fill='none' stroke='%237048e8' stroke-width='6'/%3E%3Cpolygon points='35,40 45,50 25,55' fill='%23c0c0c0'/%3E%3Cpolygon points='65,40 55,50 75,55' fill='%23c0c0c0'/%3E%3C/svg%3E"); --card-bg: rgba(12, 6, 18, 0.95); --card-gradient: linear-gradient(135deg, rgba(112, 72, 232, 0.05) 0%, transparent 100%); --card-border: #231136; --text-muted: #ae98eb; --accent-main: #7048e8; --accent-secondary: #c0c0c0; --accent-user1: #9775fa; --accent-user2: #c0c0c0; --accent-both: #d0bfff; --star-color: #9775fa; --hero-glow: rgba(112, 72, 232, 0.3); --card-hover-shadow: 0 10px 25px rgba(112, 72, 232, 0.25), inset 0 0 12px rgba(192, 192, 192, 0.05); }
-    body.theme-spidey { --bg-color: #0d0404; --bg-texture: repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 30px); --hero-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cellipse cx='50' cy='55' rx='12' ry='18' fill='%23e03131'/%3E%3Ccircle cx='50' cy='32' r='8' fill='%23e03131'/%3E%3Cpath d='M42 30 Q 20 10 10 25 M42 34 Q 15 35 5 50 M42 55 Q 10 65 10 85 M42 60 Q 25 85 30 95' stroke='%23e03131' stroke-width='4' fill='none'/%3E%3Cpath d='M58 30 Q 80 10 90 25 M58 34 Q 85 35 95 50 M58 55 Q 90 65 90 85 M58 60 Q 75 85 70 95' stroke='%23e03131' stroke-width='4' fill='none'/%3E%3C/svg%3E"); --card-bg: rgba(18, 6, 8, 0.9); --card-gradient: linear-gradient(145deg, rgba(224, 49, 49, 0.04) 0%, rgba(25, 113, 194, 0.04) 100%); --card-border: #3d141b; --text-muted: #e3a8af; --accent-main: #e03131; --accent-secondary: #1971c2; --accent-user1: #e03131; --accent-user2: #1971c2; --accent-both: #f59f00; --star-color: #e03131; --hero-glow: rgba(224, 49, 49, 0.3); --card-hover-shadow: 0 8px 20px rgba(224, 49, 49, 0.2), 0 0 15px rgba(25, 113, 194, 0.15); }
+    body.theme-ironman { --bg-color: #120302; --bg-texture: repeating-linear-gradient(45deg, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 2px, transparent 2px, transparent 4px), radial-gradient(circle at 18% 15%, rgba(255,215,0,0.10), transparent 42%), radial-gradient(circle at 85% 82%, rgba(255,42,0,0.12), transparent 45%), linear-gradient(135deg, #2b0806 0%, #0a0100 100%); --hero-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' stroke='%23ffd700' stroke-width='4' fill='none'/%3E%3Ccircle cx='50' cy='50' r='30' stroke='%23ff2a00' stroke-width='6' fill='none'/%3E%3Cpolygon points='50,15 80,65 20,65' fill='%234fc3f7'/%3E%3Ccircle cx='50' cy='50' r='12' fill='%23ffffff'/%3E%3C/svg%3E"); --card-bg: rgba(30, 8, 7, 0.9); --card-gradient: linear-gradient(145deg, rgba(255, 215, 0, 0.05) 0%, rgba(255, 0, 0, 0.02) 100%), repeating-linear-gradient(120deg, rgba(255,215,0,0.035) 0px, rgba(255,215,0,0.035) 1px, transparent 1px, transparent 14px), repeating-linear-gradient(30deg, rgba(255,42,0,0.03) 0px, rgba(255,42,0,0.03) 1px, transparent 1px, transparent 14px); --card-border: #61130d; --text-muted: #e5b376; --accent-main: #ff2a00; --accent-secondary: #ffd700; --accent-user1: #ffd700; --accent-user2: #ff2a00; --accent-both: #4fc3f7; --star-color: #ffd700; --hero-glow: rgba(255, 215, 0, 0.3); --card-hover-shadow: 0 10px 25px rgba(255, 42, 0, 0.3), inset 0 0 15px rgba(255, 215, 0, 0.1); }
+    body.theme-cap { --bg-color: #060b17; --bg-texture: repeating-linear-gradient(180deg, rgba(224,49,49,0.03) 0px, rgba(224,49,49,0.03) 18px, transparent 18px, transparent 36px), radial-gradient(circle at 50% 8%, rgba(59,91,219,0.14), transparent 45%), linear-gradient(to bottom, #09122b, #04070f); --hero-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%23e03131'/%3E%3Ccircle cx='50' cy='50' r='36' fill='%23ffffff'/%3E%3Ccircle cx='50' cy='50' r='26' fill='%23e03131'/%3E%3Ccircle cx='50' cy='50' r='16' fill='%233b5bdb'/%3E%3Cpolygon points='50,35 54,46 65,46 56,53 59,64 50,57 41,64 44,53 35,46 46,46' fill='%23ffffff'/%3E%3C/svg%3E"); --card-bg: rgba(12, 20, 43, 0.9); --card-gradient: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, transparent 100%), repeating-radial-gradient(circle at 15% 20%, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 1px, transparent 1px, transparent 22px); --card-border: #1a2a5c; --text-muted: #a5bce6; --accent-main: #e03131; --accent-secondary: #3b5bdb; --accent-user1: #3b5bdb; --accent-user2: #e03131; --accent-both: #f8f9fa; --star-color: #f1f3f5; --hero-glow: rgba(59, 91, 219, 0.3); --card-hover-shadow: 0 8px 25px rgba(59, 91, 219, 0.25), 0 0 10px rgba(224, 49, 49, 0.2); }
+    body.theme-hulk { --bg-color: #030d05; --bg-texture: repeating-linear-gradient(115deg, rgba(64,192,87,0.05) 0px, rgba(64,192,87,0.05) 2px, transparent 2px, transparent 26px), repeating-linear-gradient(25deg, rgba(156,54,181,0.04) 0px, rgba(156,54,181,0.04) 2px, transparent 2px, transparent 30px), linear-gradient(to bottom right, #051a09, #010502); --hero-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='12' fill='%2340c057'/%3E%3Cpath d='M50 10 L50 30 M50 70 L50 90 M10 50 L30 50 M70 50 L90 50' stroke='%2340c057' stroke-width='10' stroke-linecap='round'/%3E%3Cpath d='M22 22 L36 36 M64 64 L78 78 M22 78 L36 64 M64 36 L78 22' stroke='%239c36b5' stroke-width='8' stroke-linecap='round'/%3E%3C/svg%3E"); --card-bg: rgba(6, 26, 12, 0.9); --card-gradient: linear-gradient(135deg, rgba(156, 54, 181, 0.05) 0%, rgba(64, 192, 87, 0.02) 100%), repeating-linear-gradient(70deg, rgba(64,192,87,0.045) 0px, rgba(64,192,87,0.045) 1px, transparent 1px, transparent 16px); --card-border: #113d1e; --text-muted: #8cd69e; --accent-main: #40c057; --accent-secondary: #9c36b5; --accent-user1: #40c057; --accent-user2: #9c36b5; --accent-both: #82c91e; --star-color: #40c057; --hero-glow: rgba(64, 192, 87, 0.3); --card-hover-shadow: 0 10px 30px rgba(64, 192, 87, 0.2), inset 0 0 15px rgba(156, 54, 181, 0.15); }
+    body.theme-thor { --bg-color: #020712; --bg-texture: repeating-linear-gradient(100deg, rgba(116,192,252,0.05) 0px, rgba(116,192,252,0.05) 1px, transparent 1px, transparent 40px), radial-gradient(circle at 28% 18%, rgba(245,159,0,0.12), transparent 40%), radial-gradient(circle at 75% 72%, rgba(116,192,252,0.14), transparent 45%), linear-gradient(to bottom, #061126, #010308); --hero-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cellipse cx='48' cy='24' rx='36' ry='13' fill='%23495057' opacity='0.55'/%3E%3Crect x='45' y='54' width='8' height='34' rx='3' fill='%235c4326'/%3E%3Crect x='35' y='39' width='28' height='18' rx='3' fill='%23adb5bd'/%3E%3Cpath d='M50 5 L20 40 H45 L35 95 L80 45 H55 Z' fill='%23f59f00'/%3E%3C/svg%3E"); --card-bg: rgba(6, 18, 40, 0.9); --card-gradient: linear-gradient(180deg, rgba(116, 192, 252, 0.05) 0%, transparent 100%), repeating-linear-gradient(95deg, rgba(245,159,0,0.03) 0px, rgba(245,159,0,0.03) 1px, transparent 1px, transparent 20px); --card-border: #0d2654; --text-muted: #9bc7f0; --accent-main: #1971c2; --accent-secondary: #f59f00; --accent-user1: #1971c2; --accent-user2: #f59f00; --accent-both: #74c0fc; --star-color: #74c0fc; --hero-glow: rgba(116, 192, 252, 0.4); --card-hover-shadow: 0 5px 30px rgba(116, 192, 252, 0.3), 0 0 10px rgba(255,255,255,0.2); }
+    body.theme-panther { --bg-color: #050208; --bg-texture: repeating-linear-gradient(45deg, rgba(255,255,255,0.01) 0px, rgba(255,255,255,0.01) 2px, transparent 2px, transparent 6px), repeating-linear-gradient(60deg, rgba(112,72,232,0.04) 0px, rgba(112,72,232,0.04) 2px, transparent 2px, transparent 20px), repeating-linear-gradient(-60deg, rgba(192,192,192,0.035) 0px, rgba(192,192,192,0.035) 2px, transparent 2px, transparent 20px), radial-gradient(circle at 50% 0%, rgba(112,72,232,0.16), transparent 55%); --hero-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,10 85,35 75,85 50,95 25,85 15,35' fill='none' stroke='%237048e8' stroke-width='6'/%3E%3Cpolygon points='35,40 45,50 25,55' fill='%23c0c0c0'/%3E%3Cpolygon points='65,40 55,50 75,55' fill='%23c0c0c0'/%3E%3C/svg%3E"); --card-bg: rgba(12, 6, 18, 0.95); --card-gradient: linear-gradient(135deg, rgba(112, 72, 232, 0.05) 0%, transparent 100%), repeating-linear-gradient(60deg, rgba(192,192,192,0.03) 0px, rgba(192,192,192,0.03) 1px, transparent 1px, transparent 14px), repeating-linear-gradient(-60deg, rgba(112,72,232,0.03) 0px, rgba(112,72,232,0.03) 1px, transparent 1px, transparent 14px); --card-border: #231136; --text-muted: #ae98eb; --accent-main: #7048e8; --accent-secondary: #c0c0c0; --accent-user1: #9775fa; --accent-user2: #c0c0c0; --accent-both: #d0bfff; --star-color: #9775fa; --hero-glow: rgba(112, 72, 232, 0.3); --card-hover-shadow: 0 10px 25px rgba(112, 72, 232, 0.25), inset 0 0 12px rgba(192, 192, 192, 0.05); }
+    body.theme-spidey { --bg-color: #0d0404; --bg-texture: repeating-linear-gradient(45deg, rgba(224,49,49,0.035) 0px, rgba(224,49,49,0.035) 1px, transparent 1px, transparent 24px), repeating-linear-gradient(-45deg, rgba(25,113,194,0.03) 0px, rgba(25,113,194,0.03) 1px, transparent 1px, transparent 24px), radial-gradient(circle at 50% 28%, rgba(224,49,49,0.10), transparent 50%); --hero-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 3 L50 97 M3 50 L97 50 M15 15 L85 85 M15 85 L85 15' stroke='%231971c2' stroke-width='2' fill='none' opacity='0.5'/%3E%3Ccircle cx='50' cy='50' r='20' stroke='%231971c2' stroke-width='2' fill='none' opacity='0.5'/%3E%3Cellipse cx='50' cy='55' rx='12' ry='18' fill='%23e03131'/%3E%3Ccircle cx='50' cy='32' r='8' fill='%23e03131'/%3E%3Cpath d='M42 30 Q 20 10 10 25 M42 34 Q 15 35 5 50 M42 55 Q 10 65 10 85 M42 60 Q 25 85 30 95' stroke='%23e03131' stroke-width='4' fill='none'/%3E%3Cpath d='M58 30 Q 80 10 90 25 M58 34 Q 85 35 95 50 M58 55 Q 90 65 90 85 M58 60 Q 75 85 70 95' stroke='%23e03131' stroke-width='4' fill='none'/%3E%3C/svg%3E"); --card-bg: rgba(18, 6, 8, 0.9); --card-gradient: linear-gradient(145deg, rgba(224, 49, 49, 0.04) 0%, rgba(25, 113, 194, 0.04) 100%), repeating-linear-gradient(45deg, rgba(224,49,49,0.03) 0px, rgba(224,49,49,0.03) 1px, transparent 1px, transparent 18px), repeating-linear-gradient(-45deg, rgba(25,113,194,0.025) 0px, rgba(25,113,194,0.025) 1px, transparent 1px, transparent 18px); --card-border: #3d141b; --text-muted: #e3a8af; --accent-main: #e03131; --accent-secondary: #1971c2; --accent-user1: #e03131; --accent-user2: #1971c2; --accent-both: #f59f00; --star-color: #e03131; --hero-glow: rgba(224, 49, 49, 0.3); --card-hover-shadow: 0 8px 20px rgba(224, 49, 49, 0.2), 0 0 15px rgba(25, 113, 194, 0.15); }
 
     @keyframes pulse-default { 0%, 100% { box-shadow: 0 0 0 rgba(255, 94, 54, 0); } 50% { box-shadow: 0 0 20px rgba(255, 94, 54, 0.5); } }
+
+    /* --- PANNEAU CACHÉ (Ctrl+Alt+Q) --- */
+    .admin-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
+    .admin-overlay.hidden { display: none; }
+    .admin-modal { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 22px; max-width: 460px; width: 100%; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 10px; }
+    .admin-header { font-size: 1rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-main); margin-bottom: 4px; }
+    #admin-movie-select { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); border-radius: 8px; color: #fff; padding: 6px; font-size: 0.85rem; }
+    #admin-movie-select option { padding: 4px; }
+    .admin-existing-item { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; background: rgba(0,0,0,0.25); border: 1px solid var(--card-border); border-radius: 8px; padding: 8px 10px; font-size: 0.8rem; }
+    .admin-existing-item .txt { color: var(--text-main); }
+    .admin-existing-item .txt small { display: block; color: var(--text-muted); margin-top: 2px; }
+    .admin-existing-empty { font-size: 0.8rem; color: var(--text-muted); font-style: italic; }
+    .admin-correct-row { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--text-muted); flex-wrap: wrap; }
+    .admin-correct-row label { display: flex; align-items: center; gap: 4px; }
+    #admin-quiz-form input[type="text"] { padding: 9px 12px; border-radius: 8px; border: 1px solid var(--card-border); background: rgba(0,0,0,0.4); color: #fff; font-size: 0.85rem; outline: none; width: 100%; }
 
     /* ==========================================================
        RESPONSIVE MOBILE — n'affecte que les écrans <= 640px.
@@ -411,6 +426,38 @@
   </div>
 </div>
 
+<!-- Panneau caché de gestion des questions de quiz. Invisible et inaccessible
+     sans connaître le raccourci (Ctrl+Alt+Q) — aucun bouton ni lien n'y mène. -->
+<div class="admin-overlay hidden" id="admin-overlay">
+  <div class="admin-modal">
+    <div class="admin-header">🔒 Questions de quiz</div>
+    <input type="text" id="admin-movie-search" placeholder="🔍 Chercher un film...">
+    <select id="admin-movie-select" size="6"></select>
+
+    <div id="admin-existing"></div>
+
+    <form id="admin-quiz-form">
+      <label class="comment-label">Nouvelle question</label>
+      <input type="text" id="admin-q-question" placeholder="Intitulé de la question" required>
+      <input type="text" id="admin-q-opt0" placeholder="Réponse 1" required>
+      <input type="text" id="admin-q-opt1" placeholder="Réponse 2" required>
+      <input type="text" id="admin-q-opt2" placeholder="Réponse 3" required>
+      <input type="text" id="admin-q-opt3" placeholder="Réponse 4" required>
+      <div class="admin-correct-row">
+        <span class="comment-label" style="margin:0;">Bonne réponse :</span>
+        <label><input type="radio" name="admin-correct" value="0" checked> 1</label>
+        <label><input type="radio" name="admin-correct" value="1"> 2</label>
+        <label><input type="radio" name="admin-correct" value="2"> 3</label>
+        <label><input type="radio" name="admin-correct" value="3"> 4</label>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" id="admin-close">Fermer</button>
+        <button type="submit" class="btn-submit">Ajouter la question</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <!-- Firebase Scripts (Compat) -->
 <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -434,7 +481,8 @@
   const refs = {
     progress: db.ref('mcu_progress'), order: db.ref('mcu_order'), ratings: db.ref('mcu_ratings'),
     customItems: db.ref('mcu_custom_items'), hiddenItems: db.ref('mcu_hidden_items'),
-    comments: db.ref('mcu_comments'), watchDates: db.ref('mcu_watch_dates'), quizScore: db.ref('mcu_quiz_score')
+    comments: db.ref('mcu_comments'), watchDates: db.ref('mcu_watch_dates'), quizScore: db.ref('mcu_quiz_score'),
+    customQuiz: db.ref('mcu_custom_quiz')
   };
 
   // Variables de DOM mises en cache pour l'optimisation
@@ -585,9 +633,22 @@
     };
   }
 
+  // Choisit la question à poser pour un film : priorité aux questions
+  // ajoutées manuellement (panneau caché), puis aux questions écrites en
+  // dur, puis en dernier recours une question générée automatiquement.
+  function getQuizForItem(itemId, item) {
+    const custom = globalData.customQuiz[itemId];
+    if (custom) {
+      const list = Object.values(custom);
+      if (list.length) return list[Math.floor(Math.random() * list.length)];
+    }
+    if (quizData[itemId]) return quizData[itemId];
+    return generateAutoQuiz(item);
+  }
+
   let globalData = {
     progress: {}, order: {}, ratings: {}, customItems: {}, hiddenItems: {},
-    comments: {}, watchDates: {}, quizScore: 0
+    comments: {}, watchDates: {}, quizScore: 0, customQuiz: {}
   };
   let searchQuery = '';
   let filterMode = 'all';
@@ -602,6 +663,7 @@
   refs.comments.on('value', snap => { globalData.comments = snap.val() || {}; renderList(); });
   refs.watchDates.on('value', snap => { globalData.watchDates = snap.val() || {}; renderList(); renderTimeline(); });
   refs.quizScore.on('value', snap => { globalData.quizScore = snap.val() || 0; DOM.quizStat.innerText = globalData.quizScore; });
+  refs.customQuiz.on('value', snap => { globalData.customQuiz = snap.val() || {}; });
 
   function getRawCombinedMcuData() {
     const data = JSON.parse(JSON.stringify(initialMcuData));
@@ -653,8 +715,8 @@
       db.ref(`mcu_watch_dates/${itemId}/${user}`).set(Date.now());
       const item = getRawCombinedMcuData().flatMap(s => s.items).find(i => i.id === itemId);
       if (item) {
-        if (!quizData[itemId]) quizData[itemId] = generateAutoQuiz(item);
-        setTimeout(() => showQuiz(itemId, item), 350);
+        const quiz = getQuizForItem(itemId, item);
+        setTimeout(() => showQuiz(itemId, item, quiz), 350);
       }
     } else {
       db.ref(`mcu_watch_dates/${itemId}/${user}`).remove();
@@ -990,8 +1052,10 @@
   window.closeSynopsisModal = () => document.getElementById('global-synopsis-modal')?.classList.remove('active');
 
   // Quiz
-  function showQuiz(itemId, item) {
-    const q = quizData[itemId]; if (!q) return;
+  let activeQuiz = null; // question en cours d'affichage (peut venir du panneau caché, de quizData, ou être générée)
+  function showQuiz(itemId, item, quiz) {
+    const q = quiz; if (!q) return;
+    activeQuiz = q;
     document.getElementById('quiz-movie').innerText = `${item.icon || '🎬'} ${item.link ? item.title || item.link : item.title}`;
     document.getElementById('quiz-question').innerText = q.question;
     document.getElementById('quiz-options').innerHTML = q.options.map((opt, i) => `<button class="quiz-option-btn" onclick="answerQuiz('${itemId}', ${i})">${opt}</button>`).join('');
@@ -999,7 +1063,7 @@
     document.getElementById('quiz-overlay').classList.remove('hidden');
   }
   window.answerQuiz = (itemId, selectedIndex) => {
-    const q = quizData[itemId]; if (!q) return;
+    const q = activeQuiz; if (!q) return;
     const fb = document.getElementById('quiz-feedback');
     document.querySelectorAll('.quiz-option-btn').forEach((btn, i) => {
       btn.disabled = true; if (i === q.correct) btn.classList.add('correct'); else if (i === selectedIndex) btn.classList.add('wrong');
@@ -1008,6 +1072,74 @@
     else { fb.innerText = `❌ Raté ! La bonne réponse était : ${q.options[q.correct]}`; fb.className = 'quiz-feedback bad'; }
   };
   document.getElementById('quiz-close').addEventListener('click', () => document.getElementById('quiz-overlay').classList.add('hidden'));
+
+  // --- Panneau caché de gestion des questions de quiz ---
+  // Se déclenche uniquement avec Ctrl+Alt+Q — aucun bouton ni indice dans l'UI.
+  const adminOverlay = document.getElementById('admin-overlay');
+  const adminMovieSelect = document.getElementById('admin-movie-select');
+  const adminMovieSearch = document.getElementById('admin-movie-search');
+  const adminExisting = document.getElementById('admin-existing');
+  const adminForm = document.getElementById('admin-quiz-form');
+  let adminAllMovies = [];
+
+  function openAdminPanel() {
+    adminAllMovies = getRawCombinedMcuData().flatMap(s => s.items);
+    renderAdminMovieOptions('');
+    adminMovieSearch.value = '';
+    adminExisting.innerHTML = '<div class="admin-existing-empty">Choisis un film dans la liste ci-dessus.</div>';
+    adminOverlay.classList.remove('hidden');
+  }
+
+  function renderAdminMovieOptions(filter) {
+    const f = filter.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const filtered = adminAllMovies.filter(m => m.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(f));
+    adminMovieSelect.innerHTML = filtered.map(m => `<option value="${m.id}">${m.icon || '🎬'} ${m.title}${m.year ? ' (' + m.year + ')' : ''}</option>`).join('');
+  }
+
+  function renderAdminExisting(itemId) {
+    const custom = globalData.customQuiz[itemId];
+    if (!custom || !Object.keys(custom).length) {
+      adminExisting.innerHTML = '<div class="admin-existing-empty">Aucune question manuelle pour ce film pour l\'instant.</div>';
+      return;
+    }
+    adminExisting.innerHTML = Object.entries(custom).map(([key, q]) => `
+      <div class="admin-existing-item">
+        <div class="txt">${q.question}<small>Bonne réponse : ${q.options[q.correct]}</small></div>
+        <button type="button" class="delete-btn" onclick="deleteAdminQuiz('${itemId}', '${key}')">🗑️</button>
+      </div>`).join('');
+  }
+
+  window.deleteAdminQuiz = (itemId, key) => {
+    db.ref(`mcu_custom_quiz/${itemId}/${key}`).remove().then(() => renderAdminExisting(itemId));
+  };
+
+  adminMovieSearch.addEventListener('input', () => renderAdminMovieOptions(adminMovieSearch.value));
+  adminMovieSelect.addEventListener('change', () => { if (adminMovieSelect.value) renderAdminExisting(adminMovieSelect.value); });
+
+  adminForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const itemId = adminMovieSelect.value;
+    if (!itemId) { alert('Choisis d\'abord un film dans la liste.'); return; }
+    const question = document.getElementById('admin-q-question').value.trim();
+    const options = [0, 1, 2, 3].map(i => document.getElementById(`admin-q-opt${i}`).value.trim());
+    const correct = parseInt(document.querySelector('input[name="admin-correct"]:checked').value, 10);
+    if (!question || options.some(o => !o)) return;
+    db.ref(`mcu_custom_quiz/${itemId}`).push().set({ question, options, correct }).then(() => {
+      adminForm.reset();
+      renderAdminExisting(itemId);
+    });
+  });
+
+  document.getElementById('admin-close').addEventListener('click', () => adminOverlay.classList.add('hidden'));
+  adminOverlay.addEventListener('click', e => { if (e.target === adminOverlay) adminOverlay.classList.add('hidden'); });
+
+  document.addEventListener('keydown', e => {
+    if (e.ctrlKey && e.altKey && (e.key === 'q' || e.key === 'Q')) {
+      e.preventDefault();
+      adminOverlay.classList.contains('hidden') ? openAdminPanel() : adminOverlay.classList.add('hidden');
+    }
+    if (e.key === 'Escape' && !adminOverlay.classList.contains('hidden')) adminOverlay.classList.add('hidden');
+  });
 </script>
 
 </body>
