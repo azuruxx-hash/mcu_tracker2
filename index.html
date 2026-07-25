@@ -579,6 +579,7 @@
   </div>
 
   <button class="add-movie-btn" id="open-add-form">➕ Ajouter un film ou une série</button>
+  <button class="add-movie-btn" id="open-hidden-panel" style="margin-top: -15px;"></button>
   <div class="hidden-panel hidden" id="hidden-panel"></div>
 
   <form class="add-form hidden" id="add-form">
@@ -800,10 +801,7 @@
       const item = allItems.find(i => i.id === id);
       if (!item) return '';
       return `
-        <div class="hidden-item-row">
-          <div class="hidden-item-info"><span>${item.icon}</span><span>${item.link ? `<a href="${item.link}" target="_blank" style="color:var(--text-muted);">${item.title || item.link}</a>` : item.title}</span></div>
-          <button class="restore-btn" onclick="restoreItem('${item.id}')">↩️ Restaurer</button>
-        </div>
+        
       `;
     }).join('');
   }
@@ -1185,7 +1183,7 @@
   openFormBtn.addEventListener('click', () => addForm.classList.remove('hidden'));
   closeFormBtn.addEventListener('click', () => addForm.classList.add('hidden'));
 
-  let isSubmitting =- false; // Verrou
+  let isSubmitting = false; // Verrou
 
   addForm.addEventListener('submit', async (e) => {
     e.preventDefault();
