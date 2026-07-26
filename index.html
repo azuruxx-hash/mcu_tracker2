@@ -127,6 +127,9 @@
 
     /* --- NOTATIONS --- */
     .rating-section { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px; }
+    .fav-btn { background: none; border: none; cursor: pointer; font-size: 1rem; margin-left: 6px; padding: 0 2px; opacity: 0.6; transition: transform 0.2s ease, opacity 0.2s ease; vertical-align: middle; }
+    .fav-btn:hover { transform: scale(1.2); opacity: 1; }
+    .fav-btn.active { opacity: 1; }
     .ratings-container { display: flex; gap: 20px; flex-wrap: wrap; }
     .user-rating { display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.2); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.03); }
     .user-rating-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
@@ -482,7 +485,7 @@
     progress: db.ref('mcu_progress'), order: db.ref('mcu_order'), ratings: db.ref('mcu_ratings'),
     customItems: db.ref('mcu_custom_items'), hiddenItems: db.ref('mcu_hidden_items'),
     comments: db.ref('mcu_comments'), watchDates: db.ref('mcu_watch_dates'), quizScore: db.ref('mcu_quiz_score'),
-    customQuiz: db.ref('mcu_custom_quiz')
+    customQuiz: db.ref('mcu_custom_quiz'), favorites: db.ref('mcu_favorites')
   };
 
   // Variables de DOM mises en cache pour l'optimisation
@@ -648,7 +651,7 @@
 
   let globalData = {
     progress: {}, order: {}, ratings: {}, customItems: {}, hiddenItems: {},
-    comments: {}, watchDates: {}, quizScore: 0, customQuiz: {}
+    comments: {}, watchDates: {}, quizScore: 0, customQuiz: {}, favorites: {}
   };
   let searchQuery = '';
   let filterMode = 'all';
@@ -664,6 +667,7 @@
   refs.watchDates.on('value', snap => { globalData.watchDates = snap.val() || {}; renderList(); renderTimeline(); });
   refs.quizScore.on('value', snap => { globalData.quizScore = snap.val() || 0; DOM.quizStat.innerText = globalData.quizScore; });
   refs.customQuiz.on('value', snap => { globalData.customQuiz = snap.val() || {}; });
+  refs.favorites.on('value', snap => { globalData.favorites = snap.val() || {}; renderList(); });
 
   function getRawCombinedMcuData() {
     const data = JSON.parse(JSON.stringify(initialMcuData));
@@ -707,6 +711,11 @@
     value.trim() === '' ? ref.remove() : ref.set(value);
   };
 
+  window.setFavorite = (itemId, user) => {
+    const current = globalData.favorites[user];
+    db.ref(`mcu_favorites/${user}`).set(current === itemId ? null : itemId);
+  };
+
   window.toggleComments = (itemId) => document.getElementById(`comments-${itemId}`)?.classList.toggle('open');
   window.toggleUser = (itemId, user) => {
     const currentState = globalData.progress[itemId]?.[user] || false;
@@ -745,7 +754,10 @@
 
   function renderList() {
     let htmlContent = '';
-    let stats = { total: 0, bothDone: 0, sumRatings: 0, countRatings: 0, minBoth: 0, bestA: null, bestAScore: 0, bestE: null, bestEScore: 0 };
+    const allItems = getRawCombinedMcuData().flatMap(s => s.items);
+    const bestA = globalData.favorites.u1 ? allItems.find(i => i.id === globalData.favorites.u1) : null;
+    const bestE = globalData.favorites.u2 ? allItems.find(i => i.id === globalData.favorites.u2) : null;
+    let stats = { total: 0, bothDone: 0, sumRatings: 0, countRatings: 0, minBoth: 0, bestA, bestE };
     let anyVisible = false;
 
     getCombinedMcuData().forEach(sec => {
@@ -767,9 +779,6 @@
         else if (ratings.u1) avg = ratings.u1.toFixed(1);
         else if (ratings.u2) avg = ratings.u2.toFixed(1);
         if (avg !== '-') { stats.sumRatings += parseFloat(avg); stats.countRatings++; }
-
-        if (ratings.u1 && ratings.u1 >= stats.bestAScore) { stats.bestAScore = ratings.u1; stats.bestA = item; }
-        if (ratings.u2 && ratings.u2 >= stats.bestEScore) { stats.bestEScore = ratings.u2; stats.bestE = item; }
 
         if (!itemMatchesFilters(item, state, ratings)) return '';
         sectionVisibleCount++; anyVisible = true;
@@ -805,8 +814,8 @@
             </div>
             <div class="rating-section">
               <div class="ratings-container">
-                <div class="user-rating"><span class="user-rating-label">${USER_NAMES.u1}:</span>${renderStars(item.id, 'u1', ratings.u1 || 0)}</div>
-                <div class="user-rating"><span class="user-rating-label">${USER_NAMES.u2}:</span>${renderStars(item.id, 'u2', ratings.u2 || 0)}</div>
+                <div class="user-rating"><span class="user-rating-label">${USER_NAMES.u1}:</span>${renderStars(item.id, 'u1', ratings.u1 || 0)}<button class="fav-btn ${globalData.favorites.u1 === item.id ? 'active' : ''}" onclick="setFavorite('${item.id}', 'u1')" title="Définir comme préféré de ${USER_NAMES.u1}">${globalData.favorites.u1 === item.id ? '❤️' : '🤍'}</button></div>
+                <div class="user-rating"><span class="user-rating-label">${USER_NAMES.u2}:</span>${renderStars(item.id, 'u2', ratings.u2 || 0)}<button class="fav-btn ${globalData.favorites.u2 === item.id ? 'active' : ''}" onclick="setFavorite('${item.id}', 'u2')" title="Définir comme préféré de ${USER_NAMES.u2}">${globalData.favorites.u2 === item.id ? '❤️' : '🤍'}</button></div>
               </div>
               <div class="avg-rating-badge">★ ${avg}</div>
             </div>
