@@ -130,6 +130,11 @@
     .fav-btn { background: none; border: none; cursor: pointer; font-size: 1rem; margin-left: 6px; padding: 0 2px; opacity: 0.6; transition: transform 0.2s ease, opacity 0.2s ease; vertical-align: middle; }
     .fav-btn:hover { transform: scale(1.2); opacity: 1; }
     .fav-btn.active { opacity: 1; }
+.top5-toggle-btn { background: rgba(0,0,0,0.25); border: 1px solid var(--card-border); color: var(--text-muted); font-size: 0.72rem; font-weight: 700; padding: 4px 9px; border-radius: 20px; cursor: pointer; transition: all 0.2s ease; white-space: nowrap; }
+.top5-toggle-btn:hover { border-color: var(--text-muted); color: var(--text-main); }
+.top5-toggle-btn.u1.active { background: linear-gradient(135deg, var(--accent-user1), #1e3a8a); border-color: var(--accent-user1); color: white; box-shadow: 0 0 10px rgba(59,130,246,0.4); }
+.top5-toggle-btn.u2.active { background: linear-gradient(135deg, var(--accent-user2), #831843); border-color: var(--accent-user2); color: white; box-shadow: 0 0 10px rgba(236,72,153,0.4); }
+.search-result-type { font-size: 0.7rem; color: var(--accent-secondary); font-weight: 700; margin-left: 6px; }
     .ratings-container { display: flex; gap: 20px; flex-wrap: wrap; }
     .user-rating { display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.2); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.03); }
     .user-rating-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
@@ -374,6 +379,22 @@
     <div class="top5-list" id="top5-list"></div>
   </div>
 
+  <div class="top5-section">
+    <div class="section-title">
+      <span class="section-badge">⭐</span>
+      <span class="section-name">Top 5 de Aly</span>
+    </div>
+    <div class="top5-list" id="top5-u1-list"></div>
+  </div>
+
+  <div class="top5-section">
+    <div class="section-title">
+      <span class="section-badge">⭐</span>
+      <span class="section-name">Top 5 de Ewan</span>
+    </div>
+    <div class="top5-list" id="top5-u2-list"></div>
+  </div>
+
   <div class="progress-section">
     <div class="progress-header">
       <span class="progress-title">Progression commune</span>
@@ -390,6 +411,7 @@
     <div class="form-row search-row">
       <input type="text" id="new-search" placeholder="Tape le nom d'un film ou d'une série..." autocomplete="off" required>
       <input type="hidden" id="new-link">
+      <input type="hidden" id="new-type" value="film">
       <div class="search-results hidden" id="search-results"></div>
     </div>
     <div class="form-row">
@@ -483,9 +505,9 @@
   // Base de données
   const refs = {
     progress: db.ref('mcu_progress'), order: db.ref('mcu_order'), ratings: db.ref('mcu_ratings'),
-    customItems: db.ref('mcu_custom_items'), hiddenItems: db.ref('mcu_hidden_items'),
+        customItems: db.ref('mcu_custom_items'), hiddenItems: db.ref('mcu_hidden_items'),
     comments: db.ref('mcu_comments'), watchDates: db.ref('mcu_watch_dates'), quizScore: db.ref('mcu_quiz_score'),
-    customQuiz: db.ref('mcu_custom_quiz'), favorites: db.ref('mcu_favorites')
+    customQuiz: db.ref('mcu_custom_quiz'), top5: db.ref('mcu_top5')
   };
 
   // Variables de DOM mises en cache pour l'optimisation
@@ -651,7 +673,7 @@
 
   let globalData = {
     progress: {}, order: {}, ratings: {}, customItems: {}, hiddenItems: {},
-    comments: {}, watchDates: {}, quizScore: 0, customQuiz: {}, favorites: {}
+    comments: {}, watchDates: {}, quizScore: 0, customQuiz: {}, top5: { u1: {}, u2: {} }
   };
   let searchQuery = '';
   let filterMode = 'all';
@@ -667,7 +689,7 @@
   refs.watchDates.on('value', snap => { globalData.watchDates = snap.val() || {}; renderList(); renderTimeline(); });
   refs.quizScore.on('value', snap => { globalData.quizScore = snap.val() || 0; DOM.quizStat.innerText = globalData.quizScore; });
   refs.customQuiz.on('value', snap => { globalData.customQuiz = snap.val() || {}; });
-  refs.favorites.on('value', snap => { globalData.favorites = snap.val() || {}; renderList(); });
+  refs.top5.on('value', snap => { globalData.top5 = snap.val() || { u1: {}, u2: {} }; renderList(); });
 
   function getRawCombinedMcuData() {
     const data = JSON.parse(JSON.stringify(initialMcuData));
@@ -711,9 +733,34 @@
     value.trim() === '' ? ref.remove() : ref.set(value);
   };
 
-  window.setFavorite = (itemId, user) => {
-    const current = globalData.favorites[user];
-    db.ref(`mcu_favorites/${user}`).set(current === itemId ? null : itemId);
+  window.toggleTop5 = (itemId, user) => {
+    const current = globalData.top5[user] || {};
+    if (current[itemId]) {
+      // On retire le film et on recompacte les rangs restants (1..n) pour
+      // ne jamais avoir de trou (ex: 1, 3, 4 après une suppression du 2).
+      const remaining = Object.entries(current)
+        .filter(([id]) => id !== itemId)
+        .sort((a, b) => a[1] - b[1]);
+      const updated = {};
+      remaining.forEach(([id], idx) => { updated[id] = idx + 1; });
+      db.ref(`mcu_top5/${user}`).set(Object.keys(updated).length ? updated : null);
+    } else {
+      const count = Object.keys(current).length;
+      if (count >= 5) {
+        alert(`Le Top 5 de ${USER_NAMES[user]} est déjà complet ! Retire d'abord un film pour en ajouter un nouveau.`);
+        return;
+      }
+      db.ref(`mcu_top5/${user}/${itemId}`).set(count + 1);
+    }
+  };
+
+  window.moveTop5 = (user, itemId, neighborId) => {
+    if (!neighborId) return;
+    const current = globalData.top5[user] || {};
+    const updates = {};
+    updates[`mcu_top5/${user}/${itemId}`] = current[neighborId];
+    updates[`mcu_top5/${user}/${neighborId}`] = current[itemId];
+    db.ref().update(updates);
   };
 
   window.toggleComments = (itemId) => document.getElementById(`comments-${itemId}`)?.classList.toggle('open');
@@ -733,9 +780,15 @@
   };
 
   // --- AFFICHAGES ---
-  function renderStars(itemId, user, currentRating) {
-    return `<div class="stars-picker">${[1,2,3,4,5].map(i => `<button class="star-btn ${i <= currentRating ? 'active' : ''}" onclick="setRating('${itemId}', '${user}', ${i})" title="${i}/5">★</button>`).join('')}</div>`;
+  function renderTop5Btn(itemId, user) {
+    const rank = (globalData.top5[user] || {})[itemId];
+    const active = !!rank;
+    const label = active ? `★ Top ${rank}` : '+ Top 5';
+    const title = active ? `Retirer du Top 5 de ${USER_NAMES[user]}` : `Ajouter au Top 5 de ${USER_NAMES[user]}`;
+    return `<button class="top5-toggle-btn ${user} ${active ? 'active' : ''}" onclick="toggleTop5('${itemId}', '${user}')" title="${title}">${label}</button>`;
   }
+
+  function renderStars(itemId, user, currentRating) {
 
   function itemMatchesFilters(item, itemState, itemRatings) {
     if (searchQuery) {
@@ -755,8 +808,10 @@
   function renderList() {
     let htmlContent = '';
     const allItems = getRawCombinedMcuData().flatMap(s => s.items);
-    const bestA = globalData.favorites.u1 ? allItems.find(i => i.id === globalData.favorites.u1) : null;
-    const bestE = globalData.favorites.u2 ? allItems.find(i => i.id === globalData.favorites.u2) : null;
+    const top5u1First = Object.entries(globalData.top5.u1 || {}).find(([, rank]) => rank === 1);
+    const top5u2First = Object.entries(globalData.top5.u2 || {}).find(([, rank]) => rank === 1);
+    const bestA = top5u1First ? allItems.find(i => i.id === top5u1First[0]) : null;
+    const bestE = top5u2First ? allItems.find(i => i.id === top5u2First[0]) : null;
     let stats = { total: 0, bothDone: 0, sumRatings: 0, countRatings: 0, minBoth: 0, bestA, bestE };
     let anyVisible = false;
 
@@ -814,9 +869,9 @@
             </div>
             <div class="rating-section">
               <div class="ratings-container">
-                <div class="user-rating"><span class="user-rating-label">${USER_NAMES.u1}:</span>${renderStars(item.id, 'u1', ratings.u1 || 0)}<button class="fav-btn ${globalData.favorites.u1 === item.id ? 'active' : ''}" onclick="setFavorite('${item.id}', 'u1')" title="Définir comme préféré de ${USER_NAMES.u1}">${globalData.favorites.u1 === item.id ? '❤️' : '🤍'}</button></div>
-                <div class="user-rating"><span class="user-rating-label">${USER_NAMES.u2}:</span>${renderStars(item.id, 'u2', ratings.u2 || 0)}<button class="fav-btn ${globalData.favorites.u2 === item.id ? 'active' : ''}" onclick="setFavorite('${item.id}', 'u2')" title="Définir comme préféré de ${USER_NAMES.u2}">${globalData.favorites.u2 === item.id ? '❤️' : '🤍'}</button></div>
-              </div>
+                <div class="user-rating"><span class="user-rating-label">${USER_NAMES.u1}:</span>${renderStars(item.id, 'u1', ratings.u1 || 0)}${renderTop5Btn(item.id, 'u1')}</div>
+                <div class="user-rating"><span class="user-rating-label">${USER_NAMES.u2}:</span>${renderStars(item.id, 'u2', ratings.u2 || 0)}${renderTop5Btn(item.id, 'u2')}</div>
+                </div>
               <div class="avg-rating-badge">★ ${avg}</div>
             </div>
             <button class="comments-toggle" onclick="toggleComments('${item.id}')">💬 Avis & commentaires</button>
@@ -840,6 +895,33 @@
     DOM.list.innerHTML = anyVisible ? htmlContent : `<div class="no-results">Aucun élément ne correspond à ta recherche ou à ce filtre.</div>`;
     updateStatsUI(stats);
     renderTop5();
+    renderPersonalTop5(allItems);
+  }
+
+  function renderPersonalTop5(allItems) {
+    ['u1', 'u2'].forEach(user => {
+      const entries = Object.entries(globalData.top5[user] || {})
+        .map(([id, rank]) => ({ item: allItems.find(i => i.id === id), rank }))
+        .filter(e => e.item)
+        .sort((a, b) => a.rank - b.rank);
+
+      const container = document.getElementById(`top5-${user}-list`);
+      if (!entries.length) {
+        container.innerHTML = `<div class="empty-top5">${USER_NAMES[user]} n'a pas encore choisi son Top 5. Utilise le bouton "+ Top 5" sur les fiches films/séries.</div>`;
+        return;
+      }
+      const medals = ['🥇', '🥈', '🥉'], ranks = ['gold', 'silver', 'bronze'];
+      container.innerHTML = entries.map((e, idx) => `
+        <div class="top5-entry">
+          <div class="top5-rank ${ranks[idx] || ''}">${medals[idx] || (idx + 1) + 'e'}</div>
+          <div class="top5-icon">${e.item.icon || '🎬'}</div>
+          <div class="top5-info"><div class="top5-title">${e.item.link ? `<a href="${e.item.link}" target="_blank" style="color:var(--text-main);">${e.item.title || e.item.link}</a>` : e.item.title}</div></div>
+          <div class="arrow-group">
+            <button class="arrow-btn" ${idx === 0 ? 'disabled' : ''} onclick="moveTop5('${user}', '${e.item.id}', '${idx > 0 ? entries[idx - 1].item.id : ''}')">▲</button>
+            <button class="arrow-btn" ${idx === entries.length - 1 ? 'disabled' : ''} onclick="moveTop5('${user}', '${e.item.id}', '${idx < entries.length - 1 ? entries[idx + 1].item.id : ''}')">▼</button>
+          </div>
+        </div>`).join('');
+    });
   }
 
   function updateStatsUI(stats) {
@@ -931,7 +1013,7 @@
           ${item.poster ? `<img class="search-result-poster" src="${item.poster}">` : `<div class="search-result-poster"></div>`}
           <div class="search-result-info">
             <div class="search-result-title">${item.title}</div>
-            <div class="search-result-year">${item.year || ''}</div>
+            <div class="search-result-year">${item.year || ''}<span class="search-result-type">${item.type === 'serie' ? '📺 Série' : '🎬 Film'}</span></div>
           </div>
         </div>`).join('');
 
@@ -940,6 +1022,7 @@
           const item = items[parseInt(el.dataset.index, 10)];
           searchInput.value = `${item.title}${item.year ? ' (' + item.year + ')' : ''}`;
           linkInput.value = item.url;
+          document.getElementById('new-type').value = item.type || 'film';
           closeResults();
         });
       });
@@ -994,13 +1077,14 @@
         return; 
       }
 
+      const chosenType = document.getElementById('new-type').value || 'film';
       const id = 'custom_' + Date.now();
       await db.ref(`mcu_custom_items/${id}`).set({ 
         id, 
         title: movieData.title, 
         year: movieData.year || '', 
         duration: movieData.duration || 120, 
-        icon: movieData.icon || '🎬', 
+        icon: movieData.icon || (chosenType === 'serie' ? '📺' : '🎬'),
         poster: movieData.poster || '', 
         synopsis: movieData.synopsis || '', 
         link: linkValue, 
@@ -1010,7 +1094,8 @@
       // contrairement à l'ancienne valeur fixe -999 qui bloquait les flèches.
       await db.ref(`mcu_order/${id}`).set(-Date.now());
       
-      addForm.reset(); 
+      addForm.reset();
+      document.getElementById('new-type').value = 'film';
       addForm.classList.add('hidden');
       closeResults();
     } catch (error) { 
