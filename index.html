@@ -787,9 +787,7 @@
     const title = active ? `Retirer du Top 5 de ${USER_NAMES[user]}` : `Ajouter au Top 5 de ${USER_NAMES[user]}`;
     return `<button class="top5-toggle-btn ${user} ${active ? 'active' : ''}" onclick="toggleTop5('${itemId}', '${user}')" title="${title}">${label}</button>`;
   }
-
-  function renderStars(itemId, user, currentRating) {
-
+  
   function itemMatchesFilters(item, itemState, itemRatings) {
     if (searchQuery) {
       const q = searchQuery.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
